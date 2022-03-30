@@ -2,6 +2,10 @@
 session_start();
 require "env.php";
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 //create connection
 $conn = mysqli_connect();
 $mysqli = new mysqli($servername, $username, $password, $db_name);
@@ -106,27 +110,26 @@ if ($mysqli -> connect_errno) {
             <p>Please select the courses you have already completed.</p>
 			
 			<?php
-
-			if($getcourses = $mysqli -> query("SELECT course_code, name FROM courses WHERE id BETWEEN ". $year_min . " AND " . $year_max . " AND id IN (SELECT course_id FROM major_requirements WHERE major_id = " . $major_id . ")")){
+			$year_min_byTen = $year_min*10;
+			$year_max_byTen = $year_max*10;
+			if($getcourses = $mysqli -> query("SELECT course_code, name FROM courses WHERE (id BETWEEN ". $year_min . " AND " . $year_max . " OR id BETWEEN ". $year_min_byTen ." AND " . $year_max_byTen .") AND id IN (SELECT course_id FROM major_requirements WHERE major_id = " . $major_id . ")")){
 				$courseCodes = [];
 				echo "
-					<div class=\"col\">
-						<form autocomplete=\"off\" action=\"test3.php\" method=\"post\">
-							<table class=\"table\">
-							  <thead>
-								<tr>
-								  <th scope=\"col\">#</th>
-								  <th scope=\"col\">Course</th>
-								  <th scope=\"col\">When/Typically Offered</th>
-								  <th scope=\"col\">Completed</th>
-								</tr>
-							  </thead>
-							  <tbody>
+				<div class=\"col\">
+					<table class=\"table\">
+					  <thead>
+						<tr>
+						  <th scope=\"col\">#</th>
+						  <th scope=\"col\">Course</th>
+						  <th scope=\"col\">When/Typically Offered</th>
+						</tr>
+					  </thead>
+					  <tbody>
 				";
 				
 				//dynamically create table and add courses to it
 				while($row = $getcourses -> fetch_row()){
-					$courseCodes[] = $row[0];
+					$courseCodes[] = $row[0]; #row[x] should look like "COMP-2120, Object-Oriented Programming Using Java"
 					echo "<tr>";
 					echo "<th scope=\"row\">". $count . "</th>";
 					$count += 1;
@@ -141,14 +144,13 @@ if ($mysqli -> connect_errno) {
 						echo "" . $mysqli -> error;
 					}
 					echo "<td>" . $prep_term . "</td>";
-					echo "<td><input type=\"checkbox\" name=\"completed_". $row[0] ."\"/></td>";
 					echo "</tr>";
 				}
 				
 				echo "
 							</tbody>
 						</table>
-						<div class=\"mb-3 autocomplete\">
+						<form autocomplete=\"off\" action=\"test3.php\" method=\"post\">
 							<label for=\"ArtsCourses\">Number of Arts/Languages courses completed:</label>
 							<input type=\"text\" id=\"numArtsCourses\" name=\"ArtsCourses\"><br><br>
 							<label for=\"SocCourses\">Number of Social Sciences courses completed:</label>
@@ -162,10 +164,9 @@ if ($mysqli -> connect_errno) {
 							. $_SESSION["year"] . "\">
 							<input type=\"hidden\" name=\"term\" value=\""
 							. $_SESSION["term"] . "\">
-						</div>
 						<button type=\"button\" class=\"btn btn-primary mb-3\" onclick = \"location.href='https://roata.myweb.cs.uwindsor.ca/Self-Student%20Counselling/test.php';\">Back</button>
 						<button type=\"submit\" class=\"btn btn-primary mb-3\" onclick = \"return emptyFields()\">Submit</button>
-					</form>
+						</form>
 				</div>
 				";
 				

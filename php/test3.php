@@ -6,6 +6,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+
+
 //create connection
 $conn = mysqli_connect();
 $mysqli = new mysqli($servername, $username, $password, $db_name);
@@ -15,7 +17,6 @@ if ($mysqli -> connect_errno) {
   echo "Failed to connect to MySQL: " . $mysqli -> connect_error;
   exit();
 }
-
 /*
 foreach($_POST as $key=>$value)
 {
@@ -23,15 +24,19 @@ foreach($_POST as $key=>$value)
 }
 */
 
-$num_arts = $_POST['ArtsCourses'];
-$num_soc = $_POST['SocCourses'];
-$num_elec = $_POST['ElecCourses'];
+
+
+$num_arts = $_POST["ArtsCourses"];
+$num_soc = $_POST["SocCourses"];
+$num_elec = $_POST["ElecCourses"];
+$_SESSION["ArtsCourses"] = $num_arts;
+$_SESSION["SocCourses"] = $num_soc;
+$_SESSION["ElecCourses"] = $num_elec;
 $program = $_SESSION["program"];
 $year = $_SESSION["year"];
 $term = $_SESSION["term"];
-$courseCodes = $_SESSION["courseCodes"];
 $courses_this_year = $_SESSION["courses_this_year"];
-$incomplete_count = 1;
+$incomplete_count = 0;
 $complete_count = 0;
 $major_id = $_SESSION["major_id"];
 
@@ -41,8 +46,10 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
 		$row = $numReqs -> fetch_row();
 		if($reqsList = $mysqli -> query("SELECT * FROM ".$row[0]."_requirements WHERE course_id = " . $coursecode)){
 			$reqsRow = $reqsList -> fetch_row();
+			//print_r($reqsRow);
 			$reqsRow = array_shift($reqsRow);
 			print_r($reqsRow);
+			
 		}
 		else{
 			echo "query failed: " . $mysqli -> error;
@@ -74,64 +81,62 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
     <body>
         <div class="container"> 
           <div class="row"> 
-			<h1>Required courses for <?php echo $year?> for <?php echo $program ?></h1>
+			<h1>All Required Courses for <?php echo $program ?></h1>
             <h2>Page 3</h2>
-            <p>Incomplete Courses</p>
+            <p>Select all courses you have ALREADY COMPLETED</p>
 			
 			<?php 
 			
-			$completedCourses = [];
+			/*
 			for($i = 0; $i < ($courses_this_year-1); $i++){
 				$temp = "completed_" . $courseCodes[$i]; //check if completed checkbox was checked for each course
 	
-				if(isset($_POST[$temp])){
+				if(isset($_POST[$temp])){ //form data was submitted through POST method so we can get it through POST on this webpage
 					$completedCourses[] = $courseCodes[$i]; //add the course to the list of completed courses
 					$numeric_code = explode("-", $courseCodes[$i]);
 					get_prereqs($mysqli, $numeric_code[1]);
 				}
-			}
+			}*/
 			
-			//perform a query to find the major id according to the program
 			
+			//Get all courses associated with a particular major
 			if($getcourses = $mysqli -> query("SELECT course_code, name FROM courses WHERE id IN (SELECT course_id FROM major_requirements WHERE major_id = " . $major_id . ")")){
 				echo "
-					<div class=\"col\">
+				<div class=\"col\">
+					<form action=\"test4.php\" method=\"post\">
 						<table class=\"table\">
 						  <thead>
 							<tr>
 							  <th scope=\"col\">#</th>
 							  <th scope=\"col\">Course</th>
+							  <th scope=\"col\">Completed</th>
 							</tr>
 						  </thead>
 						  <tbody>
 				";
 				
-				//dynamically create table and add courses to it
+				//dynamically create and add to table of all courses in the major
 				$preplist = [];
+				$major_courses = [];
 				while($row = $getcourses -> fetch_row()){
-					
-					if(!in_array($row[0], $completedCourses)){
-						echo "<tr>";
-						echo "<th scope=\"row\">". $incomplete_count . "</th>";
-						$incomplete_count += 1;
-						echo "<td>". $row[0]. " - ". $row[1] ."</td>";
-						echo "</tr>";
-					}
-					else{ //Since we fetch through query results iteratively and we need data to be added to another table instead of this one if the course is complete, we'll prep the HTML we want to display in the other table
-						
-						$complete_count++;
-						$prep = "
-						<tr>
-						<th scope=\"row\">". $complete_count . "</th>
-						<td>". $row[0]. " - ". $row[1] ."</td>
-						</tr>";
-						$preplist[] = $prep;
-					}
+					echo $row[0];
+					$major_courses[] = $row[0]; //add course code to list of all major courses
+					$incomplete_count++;
+					echo "<tr>";
+					echo "<th scope=\"row\">". $incomplete_count . "</th>";
+					echo "<td>". $row[0]. " - ". $row[1] ."</td>";
+					echo "<td><input type=\"checkbox\" name=\"completed_".$row[0]."\"></td>";
+					echo "</tr>";
 				}
+				
+				$_SESSION['incomplete_count'] = $incomplete_count; //save the number of incomplete courses because we will need to iterate through the list of incompletes again to see if the user marked any courses as complete on this page.
 				
 				echo "
 					</tbody>
 				  </table>
+					<button type=\"button\" class=\"btn btn-primary mb-3\" onclick = \"location.href='https://roata.myweb.cs.uwindsor.ca/Self-Student%20Counselling/test2.php';\">Back</button>
+					<button type=\"submit\" class=\"btn btn-primary mb-3\" onclick = \"return emptyFields()\">Submit</button>
+				  </form>
 				</div>
 				";
 			}
@@ -139,37 +144,10 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
 				echo "failed : ".$mysqli -> error;
 			}
 			
+			$_SESSION["major_courses"] = $major_courses;
 			?>
 			
 			<br>
-			<p>Completed Courses</p>
-			
-			<?php
-			
-				
-				echo "
-						<div class=\"col\">
-							<table class=\"table\">
-							  <thead>
-								<tr>
-								  <th scope=\"col\">#</th>
-								  <th scope=\"col\">Course</th>
-								</tr>
-							  </thead>
-							  <tbody>
-					";
-					
-				for($i = 0; $i < ($complete_count); $i++){ //fill completed courses table with prepped html
-					echo $preplist[$i];
-				}
-				
-				echo "
-					</tbody>
-				  </table>
-				</div>
-				";
-				
-			?>
 			
 			<!--
             <div class="col">
@@ -215,9 +193,9 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
 			
           </div>
             <!--<button type="submit" class="btn btn-primary">Back</button>--><!--dont use?-->
-            <a class="btn btn-primary" href="test2.html" role="button">Back</a> <!--how to submit form data with link?-->
+            <!--<a class="btn btn-primary" href="test2.php" role="button">Back</a> <!--how to submit form data with link?-->
             <!--<button type="submit" class="btn btn-primary">Continue</button>--><!--dont use?-->
-            <a class="btn btn-primary" href="test4.html" role="button">Continue</a> <!--how to submit form data with link?-->
+            <!--<a class="btn btn-primary" href="test4.php" role="button">Continue</a> <!--how to submit form data with link?-->
 
         </div>
 
