@@ -17,8 +17,6 @@ if ($mysqli -> connect_errno) {
 }
 ?>
 
-
-
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -173,81 +171,67 @@ if ($mysqli -> connect_errno) {
 				$_SESSION["courseCodes"] = $courseCodes;
 				$_SESSION["courses_this_year"] = $count;
 			}
+
+
+
+
+
+			
+
+			if($getcourses = $mysqli -> query("SELECT course_code, name FROM extra_courses WHERE (id BETWEEN ". $year_min . " AND " . $year_max . " OR id BETWEEN ". $year_min_byTen ." AND " . $year_max_byTen .") AND id IN (SELECT course_id FROM major_requirements WHERE major_id = " . $major_id . ")")){
+				$courseCodes = [];
+				echo "
+				<div class=\"col\">
+					<table class=\"table\">
+					  <thead>
+						<tr>
+						  <th scope=\"col\">#</th>
+						  <th scope=\"col\">Course</th>
+						  <th scope=\"col\">When/Typically Offered</th>
+						</tr>
+					  </thead>
+					  <tbody>
+				";
+				
+				//dynamically create table and add courses to it
+				while($row = $getcourses -> fetch_row()){
+					$courseCodes[] = $row[0]; #row[x] should look like "COMP-2120, Object-Oriented Programming Using Java"
+					echo "<tr>";
+					echo "<th scope=\"row\">". $count . "</th>";
+					$count += 1;
+					echo "<td>". $row[0]. " - ". $row[1] ."</td>";
+					$prep_term = "";
+					if($getterm = $mysqli -> query("SELECT semester FROM course_offerings WHERE course_id = (SELECT id FROM extra_courses WHERE course_code = '". $row[0] ."')")){
+						while($termrow = $getterm -> fetch_row()){
+							$prep_term .= " " . $termrow[0];
+						}
+					}
+					else{
+						echo "" . $mysqli -> error;
+					}
+					echo "<td>" . $prep_term . "</td>";
+					echo "</tr>";
+				}
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			
 			?>
 			
-			<!--
-            <div class="col">
-              <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Course</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>COMP1000 - INTRO TO COMP SCI</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>COMP2310 - NAME HERE</td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>COMP4990 - PROJECT</td>
-                    </tr>
-                  </tbody>
-              </table>
-            </div>
-			-->
-			
-			
-			<!-- NOTE: the contents of the div elements below has been commented out to hide the content but keep the page layout,
-				Without these elements the buttons at the bottom of the page will stretch across the length of the page instead of being
-				confined to the bottom left. It would be nice to reformat the structure of the page to not have to do this.-->
-            <div class="col">
-               <div class="row">
-                <!-- <p>Completed</p> -->
-              </div>
-              <div class="row">
-                <div class="form-check">
-					<!--
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    <label class="form-check-label" for="flexCheckDefault">
-                    </label>
-					-->
-                </div>
-              </div>
-              <div class="row">
-                <div class="form-check">
-				<!--
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    <label class="form-check-label" for="flexCheckDefault">
-                      Completed
-                    </label>
-					-->
-                </div>
-              </div>
-            </div> 
           </div>
-		
-			
-				
-		
-			<div class="container-md">
-					
-		
-			</div>
-		  
-          
-          <!--<button type="submit" class="btn btn-primary" href="test.php">Back</button><!--dont use?-->
-          <!-- <a class="btn btn-primary" href="test.php" role="button">Back</a> <!--how to submit form data with link?-->
-         <!-- <button type="submit" class="btn btn-primary" formaction="test3.php">Continue</button><!--dont use?-->
-          <!--<a class="btn btn-primary" href="test3.php" role="button">Continue</a> <!--how to submit form data with link?-->
-        
-
         </div>
 
         <!-- Popper and Bootstrap JS -->
