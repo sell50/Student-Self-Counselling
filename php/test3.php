@@ -148,56 +148,6 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
 			?>
 			
 			<br>
-			
-			<!--
-            <div class="col">
-              <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Course</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>COMP1000 - INTRO TO COMP SCI</td>
-                      
-                    
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>COMP2310 - NAME HERE</td>
-              
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>COMP4990 - PROJECT</td>
-                    </tr>
-                  </tbody>
-              </table>
-            </div>
-            <div class="col">
-              <div class="row">
-                <p>Add Course</p>
-              </div>
-              
-              <button type="submit" class="btn btn-danger">Add</button>
-              
-              <!-- <div class="col">
-                <button type="submit" class="btn btn-danger">Add</button>
-              <!-- </div> 
-            </div> 
-			-->
-			
-			
-          </div>
-            <!--<button type="submit" class="btn btn-primary">Back</button>--><!--dont use?-->
-            <!--<a class="btn btn-primary" href="test2.php" role="button">Back</a> <!--how to submit form data with link?-->
-            <!--<button type="submit" class="btn btn-primary">Continue</button>--><!--dont use?-->
-            <!--<a class="btn btn-primary" href="test4.php" role="button">Continue</a> <!--how to submit form data with link?-->
-
-        </div>
 
         <!-- Popper and Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>

@@ -33,22 +33,6 @@ session_start();
 
         <div class="container-md">
             <form autocomplete="off" action="test2.php" method="get">
-
-                <!-- <div class="mb-3 autocomplete">
-                    <label for="program" class="form-label">Select your program</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="programName" id="undergrad1" onclick="check()" checked>
-                        <label class="form-check-label" for="undergrad1">
-                            Undergraduate        
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="programName" id="grad1" onclick="check()" >
-                        <label class="form-check-label" for="grad1">
-                          Graduate
-                        </label>
-                      </div>
-                </div> -->
  
                 <div class="mb-3 autocomplete">
                     <label for="program" class="form-label">Select your major</label>
@@ -83,10 +67,6 @@ session_start();
                         <option value="Summer">
                     </datalist>
                 </div>
-                <!-- <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="newStudent">
-                    <label class="form-check-label" for="newStudent">Are you a new student?</label>
-                </div> -->
 				
 				<script type = "text/javascript">
 					function emptyFields(){
@@ -113,19 +93,10 @@ session_start();
 				</script>
 				
 				<button type="submit" class="btn btn-primary mb-3" onclick="return emptyFields()">Submit</button>
-                <!--<button type="submit" href="test2.php" class="btn btn-primary">Continue</button><!--dont use?-->
-                <!--<a class="btn btn-primary" href="test2.php" role="button">Continue</a> <!--how to submit form data with link?-->
+
             </form>
         </div>
 
-        <script>
-            // autocomplete(document.getElementById("program"), programs);
-            //check();
-            //autocomplete(document.getElementById("year"), years);
-            //autocomplete(document.getElementById("term"), terms);
-
-            
-        </script>
 
         <!-- Popper and Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
