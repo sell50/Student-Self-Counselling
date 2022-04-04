@@ -18,7 +18,8 @@
             <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Course</th>
+                <th scope="col">Code</th>
+                <th scope="col">Name</th>
                 <th scope="col">Semesters Offered</th>
             </tr>
             </thead>
@@ -26,6 +27,7 @@
             <?php foreach ($courses as $index => $course): ?>
                 <tr>
                     <th scope="row"><?php echo $index + 1 ?></th>
+                    <td><?php echo $course['code'] ?></td>
                     <td><?php echo $course['name'] ?></td>
                     <td><?php echo $course['semesters'] ?></td>
                 </tr>

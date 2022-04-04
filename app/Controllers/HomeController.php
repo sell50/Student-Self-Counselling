@@ -17,7 +17,7 @@ class HomeController extends Controller
         }
 
         $courses = [];
-        foreach (Program::getRequiredCourses($_GET['program']) as $course) {
+        foreach (Program::getRequiredCourses($_GET['program'], $_GET['year']) as $course) {
 
             $semesters = Course::getSemesters($course['id']);
             $semesters = array_column($semesters, 'name');
@@ -25,6 +25,7 @@ class HomeController extends Controller
 
             $courses[] = [
                 'id' => $course['id'],
+                'code' => $course['code'],
                 'name' => $course['name'],
                 'semesters' => $semesters,
             ];
