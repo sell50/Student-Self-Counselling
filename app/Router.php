@@ -9,7 +9,7 @@ class Router
         if (!isset($this->routes[$route])) {
             $this->routes[$route] = [];
         }
-        array_push($this->routes[$route], $controller);
+        $this->routes[$route][] = $controller;
     }
 
     public function handle(): Response
@@ -25,16 +25,17 @@ class Router
 
             foreach ($values as $value) {
 
-                $method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
+//                $method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 
                 // check if the route method is valid
-                if (strtolower($value[1]) !== strtolower($method)) {
-                    continue;
-                }
+//                if (strtolower($value[1]) !== strtolower($method)) {
+//                    continue;
+//                }
+
+                $path = $path == '/' ? 'first' : ltrim($path, '/');
 
                 try {
-                    // call the controller function
-                    return call_user_func([new $value[0], $value[1]]);
+                    return call_user_func([new $value[0], $path]);
                 } catch (Exception) {
                     return new Response(404, file_get_contents(__DIR__ . '/../templates/errors/500.html'));
                 }

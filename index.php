@@ -10,7 +10,9 @@ require_once __DIR__ . '/app/Response.php';
 require_once __DIR__ . '/app/Router.php';
 
 // models
-require_once __DIR__ . '/app/Models/Major.php';
+require_once __DIR__ . '/app/Models/Course.php';
+require_once __DIR__ . '/app/Models/Program.php';
+require_once __DIR__ . '/app/Models/Semester.php';
 
 // controllers
 require_once __DIR__ . '/app/Controllers/HomeController.php';
@@ -22,7 +24,9 @@ $app = new App();
 $app->environment->load();
 
 // register all the routes
-$app->router->add('/', ['HomeController', 'get']);
+$app->router->add('/', ['HomeController', 'first']);
+$app->router->add('/second', ['HomeController', 'second']);
+$app->router->add('/third', ['HomeController', 'third']);
 
 // intercept incoming request and redirect to proper function
 $response = $app->router->handle();

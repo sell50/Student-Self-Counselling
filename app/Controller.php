@@ -2,6 +2,11 @@
 
 class Controller
 {
+    protected function bad(): Response
+    {
+        return new Response(400, '400 Bad Request');
+    }
+
     protected function redirect(string $path): void
     {
         header("Location: $path");
