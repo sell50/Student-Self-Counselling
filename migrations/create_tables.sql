@@ -34,10 +34,12 @@ CREATE TABLE `course_semester`
     foreign key (semester_id) references semesters (id)
 );
 
-CREATE TABLE `course_requirements`
+CREATE TABLE `course_prerequisite`
 (
-    `course_id`        int(11) NOT NULL,
-    `num_requirements` int(1) NOT NULL
+    `course_id`       int unsigned,
+    `prerequisite_id` int unsigned,
+    foreign key (course_id) references courses (id),
+    foreign key (prerequisite_id) references courses (id)
 );
 
 CREATE TABLE `extra_courses`
