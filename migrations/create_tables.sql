@@ -7,7 +7,7 @@ CREATE TABLE `programs`
 CREATE TABLE `courses`
 (
     `id`      int unsigned auto_increment primary key,
-    `code`    char(9),
+    `code`    varchar(10),
     `name`    varchar(100),
     `credits` tinyint unsigned
 );
