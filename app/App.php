@@ -14,6 +14,9 @@ final class App
 
     public static function getDatabase(): Database
     {
-        return self::$database ?? new Database();
+        if (!isset(self::$database)) {
+            self::$database = new Database();
+        }
+        return self::$database;
     }
 }
