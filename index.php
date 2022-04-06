@@ -27,6 +27,7 @@ $app->environment->load();
 $app->router->add('/', ['HomeController', 'first']);
 $app->router->add('/second', ['HomeController', 'second']);
 $app->router->add('/third', ['HomeController', 'third']);
+$app->router->add('/fourth', ['HomeController', 'fourth']);
 
 // intercept incoming request and redirect to proper function
 $response = $app->router->handle();

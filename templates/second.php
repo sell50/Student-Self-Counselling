@@ -12,7 +12,7 @@
         </a>
     </header>
 
-    <form action="/third" method="get">
+    <form action="/third" method="post">
 
         <table class="table">
             <thead>

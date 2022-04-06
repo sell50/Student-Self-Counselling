@@ -45,4 +45,10 @@ class HomeController extends Controller
         return $this->render('third', [
         ]);
     }
+
+    public function fourth(): Response
+    {
+        return $this->render('fourth', [
+        ]);
+    }
 }
