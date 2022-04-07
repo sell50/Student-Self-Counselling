@@ -17,7 +17,7 @@ class HomeController extends Controller
         }
 
         $courses = [];
-        foreach (Program::getRequiredCourses($_GET['program'], $_GET['year']) as $course) {
+        foreach (Program::getRequiredCoursesForYear($_GET['program'], $_GET['year']) as $course) {
 
             $semesters = Course::getSemesters($course['id']);
             $semesters = array_column($semesters, 'name');
@@ -32,17 +32,29 @@ class HomeController extends Controller
         }
 
         return $this->render('second', [
-            'courses' => $courses
+            'program' => $_GET['program'],
+            'courses' => $courses,
         ]);
     }
 
     public function third(): Response
     {
-        if (!isset($_GET['art'], $_GET['social'], $_GET['electives'])) {
+        if (!isset($_GET['program'], $_GET['art'], $_GET['social'], $_GET['electives'])) {
             return $this->bad();
         }
 
+        $courses = [];
+        foreach (Program::getRequiredCourses($_GET['program']) as $course) {
+            $courses[] = [
+                'id' => $course['id'],
+                'code' => $course['code'],
+                'name' => $course['name'],
+                'requirements' => Course::getPrerequisites($course['id']),
+            ];
+        }
+
         return $this->render('third', [
+            'courses' => $courses,
         ]);
     }
 

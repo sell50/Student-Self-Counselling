@@ -12,6 +12,57 @@
         </a>
     </header>
 
+    <form action="/fourth" method="get">
+
+        <table class="table ">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Code</th>
+                <th scope="col">Name</th>
+                <th scope="col">Completed</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($courses as $index => $course): ?>
+                <tr>
+                    <th scope="row"><?php echo $index + 1 ?></th>
+                    <td class="fw-bold"><?php echo $course['code'] ?></td>
+                    <td class="fw-bold"><?php echo $course['name'] ?></td>
+                    <td>
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    </td>
+                </tr>
+                <?php foreach ($course['requirements'] as $i => $requirement): ?>
+                    <tr>
+                        <th colspan="2"></th>
+                        <td colspan="2"><?php echo $requirement['code'] . ' - ' . $requirement['name'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+
+        <!--        <div class="mb-3">
+                    <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>
+                    <input type="number" class="form-control" name="art" id="art" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="social" class="form-label">Number of Social Sciences courses completed:</label>
+                    <input type="number" class="form-control" name="social" id="social" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="electives" class="form-label">Number of Elective courses completed:</label>
+                    <input type="number" class="form-control" name="electives" id="electives" required>
+                </div>-->
+
+        <a href="/" class="btn btn-primary">Back</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
 </div>
 
 </body>

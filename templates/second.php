@@ -12,7 +12,7 @@
         </a>
     </header>
 
-    <form action="/third" method="post">
+    <form action="/third" method="get">
 
         <table class="table">
             <thead>
@@ -34,6 +34,8 @@
             <?php endforeach; ?>
             </tbody>
         </table>
+
+        <input type="hidden" name="program" value="<?php echo $program ?>">
 
         <div class="mb-3">
             <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>
