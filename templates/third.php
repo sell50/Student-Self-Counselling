@@ -64,7 +64,7 @@
         </div>
 
         <a href="/" class="btn btn-primary">Back</a>
-        <button class="btn btn-primary" type="submit" id="submit">Submit</button>
+        <button class="btn btn-primary" type="submit" id="submit" disabled>Submit</button>
     </form>
 
 </div>
