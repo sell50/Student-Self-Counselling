@@ -27,10 +27,18 @@
             <?php foreach ($courses as $index => $course): ?>
                 <tr>
                     <th scope="row"><?php echo $index + 1 ?></th>
-                    <td><?php echo $course['code'] ?></td>
-                    <td><?php echo $course['name'] ?></td>
-                    <td><?php echo $course['semesters'] ?></td>
+                    <td class="fw-bold"><?php echo $course['code'] ?></td>
+                    <td class="fw-bold"><?php echo $course['name'] ?></td>
+                    <td class="fw-bold"><?php echo $course['semesters'] ?></td>
                 </tr>
+                <?php foreach ($course['requirements'] as $i => $requirement): ?>
+                    <tr>
+                        <th></th>
+                        <td><?php echo $requirement['code'] ?></td>
+                        <td><?php echo $requirement['name'] ?></td>
+                        <td><?php echo $requirement['semesters'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
             <?php endforeach; ?>
             </tbody>
         </table>

@@ -19,15 +19,22 @@ class HomeController extends Controller
         $courses = [];
         foreach (Program::getRequiredCoursesForYear($_GET['program'], $_GET['year']) as $course) {
 
-            $semesters = Course::getSemesters($course['id']);
-            $semesters = array_column($semesters, 'name');
-            $semesters = join(', ', $semesters);
+            $requirements = [];
+            foreach (Course::getPrerequisites($course['id']) as $requirement) {
+                $requirements[] = [
+                    'id' => $requirement['id'],
+                    'code' => $requirement['code'],
+                    'name' => $requirement['name'],
+                    'semesters' => self::getSemesters($requirement['id']),
+                ];
+            }
 
             $courses[] = [
                 'id' => $course['id'],
                 'code' => $course['code'],
                 'name' => $course['name'],
-                'semesters' => $semesters,
+                'semesters' => self::getSemesters($course['id']),
+                'requirements' => $requirements,
             ];
         }
 
@@ -49,6 +56,7 @@ class HomeController extends Controller
                 'id' => $course['id'],
                 'code' => $course['code'],
                 'name' => $course['name'],
+                'semesters' => self::getSemesters($course['id']),
                 'requirements' => Course::getPrerequisites($course['id']),
             ];
         }
@@ -65,5 +73,12 @@ class HomeController extends Controller
 
         return $this->render('fourth', [
         ]);
+    }
+
+    private static function getSemesters(int $course): string
+    {
+        $semesters = Course::getSemesters($course);
+        $semesters = array_column($semesters, 'name');
+        return join(', ', $semesters);
     }
 }
