@@ -12,7 +12,7 @@
         </a>
     </header>
 
-    <form action="/fourth" method="get">
+    <form action="/fourth" method="post">
 
         <table class="table ">
             <thead>
@@ -30,7 +30,7 @@
                     <td class="fw-bold"><?php echo $course['code'] ?></td>
                     <td class="fw-bold"><?php echo $course['name'] ?></td>
                     <td>
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                        <input class="form-check-input" type="checkbox" name="courses[]" value="<?php echo $course['code'] ?>">
                     </td>
                 </tr>
                 <?php foreach ($course['requirements'] as $i => $requirement): ?>

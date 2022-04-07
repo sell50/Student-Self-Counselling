@@ -60,6 +60,9 @@ class HomeController extends Controller
 
     public function fourth(): Response
     {
+        var_dump($_POST['courses']);
+        exit();
+
         return $this->render('fourth', [
         ]);
     }
