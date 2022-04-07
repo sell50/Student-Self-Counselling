@@ -1,7 +1,11 @@
 CREATE TABLE `programs`
 (
-    `id`   int unsigned auto_increment primary key,
-    `name` varchar(100)
+    `id`                     int unsigned auto_increment primary key,
+    `name`                   varchar(100),
+    `additional_courses`     tinyint unsigned,
+    `art_language_courses`   tinyint unsigned,
+    `social_science_courses` tinyint unsigned,
+    `electives`              tinyint unsigned
 );
 
 CREATE TABLE `courses`

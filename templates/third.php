@@ -20,7 +20,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
-                <th scope="col">Completed</th>
+                <th scope="col">Semester Taken</th>
             </tr>
             </thead>
             <tbody>
@@ -30,12 +30,18 @@
                     <td class="fw-bold"><?php echo $course['code'] ?></td>
                     <td class="fw-bold"><?php echo $course['name'] ?></td>
                     <td>
-                        <input class="form-check-input"
+<!--                        <input class="form-check-input"
                                type="checkbox"
                                name="courses[]"
                                onclick="checkForm()"
-                               value="<?php echo $course['code'] ?>"
-                        >
+                               value="<?php /*echo $course['code'] */?>"
+                        >-->
+                        <select class="form-select form-select-sm">
+                            <option selected>-</option>
+                            <option value="1">Fall</option>
+                            <option value="2">Winter</option>
+                            <option value="3">Summer</option>
+                        </select>
                     </td>
                 </tr>
                 <?php foreach ($course['requirements'] as $i => $requirement): ?>

@@ -46,7 +46,7 @@
         <input type="hidden" name="program" value="<?php echo $program ?>">
 
         <a href="/" class="btn btn-primary">Back</a>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Next</button>
     </form>
 
 </div>
