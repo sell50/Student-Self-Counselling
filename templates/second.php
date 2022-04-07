@@ -37,21 +37,6 @@
 
         <input type="hidden" name="program" value="<?php echo $program ?>">
 
-<!--        <div class="mb-3">
-            <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>
-            <input type="number" class="form-control" name="art" id="art" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="social" class="form-label">Number of Social Sciences courses completed:</label>
-            <input type="number" class="form-control" name="social" id="social" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="electives" class="form-label">Number of Elective courses completed:</label>
-            <input type="number" class="form-control" name="electives" id="electives" required>
-        </div>-->
-
         <a href="/" class="btn btn-primary">Back</a>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>

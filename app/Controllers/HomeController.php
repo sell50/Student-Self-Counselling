@@ -39,7 +39,7 @@ class HomeController extends Controller
 
     public function third(): Response
     {
-        if (!isset($_GET['program'], $_GET['art'], $_GET['social'], $_GET['electives'])) {
+        if (!isset($_GET['program'])) {
             return $this->bad();
         }
 
