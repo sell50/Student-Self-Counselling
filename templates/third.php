@@ -40,8 +40,9 @@
                 </tr>
                 <?php foreach ($course['requirements'] as $i => $requirement): ?>
                     <tr>
-                        <th colspan="2"></th>
-                        <td colspan="2"><?php echo $requirement['code'] . ' - ' . $requirement['name'] ?></td>
+                        <th></th>
+                        <td><?php echo $requirement['code'] ?></td>
+                        <td colspan="2"><?php echo $requirement['name'] ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endforeach; ?>
