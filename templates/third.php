@@ -12,7 +12,7 @@
         </a>
     </header>
 
-    <form action="/fourth" method="post">
+    <form action="/fourth" method="post" id="form">
 
         <table class="table ">
             <thead>
@@ -30,7 +30,12 @@
                     <td class="fw-bold"><?php echo $course['code'] ?></td>
                     <td class="fw-bold"><?php echo $course['name'] ?></td>
                     <td>
-                        <input class="form-check-input" type="checkbox" name="courses[]" value="<?php echo $course['code'] ?>">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="courses[]"
+                               onclick="checkForm()"
+                               value="<?php echo $course['code'] ?>"
+                        >
                     </td>
                 </tr>
                 <?php foreach ($course['requirements'] as $i => $requirement): ?>
@@ -43,27 +48,33 @@
             </tbody>
         </table>
 
+        <div class="mb-3">
+            <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>
+            <input type="number" class="form-control" name="art" id="art" required>
+        </div>
 
-        <!--        <div class="mb-3">
-                    <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>
-                    <input type="number" class="form-control" name="art" id="art" required>
-                </div>
+        <div class="mb-3">
+            <label for="social" class="form-label">Number of Social Sciences courses completed:</label>
+            <input type="number" class="form-control" name="social" id="social" required>
+        </div>
 
-                <div class="mb-3">
-                    <label for="social" class="form-label">Number of Social Sciences courses completed:</label>
-                    <input type="number" class="form-control" name="social" id="social" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="electives" class="form-label">Number of Elective courses completed:</label>
-                    <input type="number" class="form-control" name="electives" id="electives" required>
-                </div>-->
+        <div class="mb-3">
+            <label for="electives" class="form-label">Number of Elective courses completed:</label>
+            <input type="number" class="form-control" name="electives" id="electives" required>
+        </div>
 
         <a href="/" class="btn btn-primary">Back</a>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button class="btn btn-primary" type="submit" id="submit">Submit</button>
     </form>
 
 </div>
+
+<script type="application/javascript">
+    function checkForm() {
+        const form = new FormData(document.getElementById("form"));
+        document.getElementById("submit").disabled = !form.has("courses[]");
+    }
+</script>
 
 </body>
 </html>
