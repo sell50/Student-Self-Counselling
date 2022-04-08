@@ -18,9 +18,9 @@ session_start();
         <script src="../js/test.js"></script>
     </head>
 
-    <body>
-        <div class="container">
-            <h1>Welcome to the Computer Science Course Scheduler!</h1>
+    <body style="font-size:larger;">
+        <div class="container-fluid">
+            <h3>Welcome to the Computer Science Course Scheduler!</h3>
             <p>Please fill out some information to get your schedule.</p>
         </div>
 		
@@ -30,7 +30,7 @@ session_start();
         </div>
     <?php } ?>
 
-        <div class="container-md">
+        <div class="container-fluid">
             <form autocomplete="off" action="test2.php" method="get">
  
                 <div class="mb-3 autocomplete">

@@ -33,7 +33,7 @@ if ($mysqli -> connect_errno) {
         <link rel="stylesheet" href="../css/test.css">
         <script src="../js/test.js"></script>
     </head>
-    <body>
+    <body style="font-size:larger;">
 	
 		<?php
 		
@@ -98,10 +98,10 @@ if ($mysqli -> connect_errno) {
 					}
 		</script>
 		
-        <div class="container">
+        <div class="container-fluid">
           <div class="row">            
 			<?php if($_GET['termq']){ ?>
-				<h1>Required courses for <?php echo $_GET['yearq']?> for <?php echo $_GET['programq']?></h1>
+				<h3>Required courses for <?php echo $_GET['yearq']?> for <?php echo $_GET['programq']?></h3>
 			<?php } ?>
 			
             <p>Please select the courses you have already completed.</p>

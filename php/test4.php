@@ -1561,10 +1561,10 @@ class Major5{
         <link rel="stylesheet" href="../css/test.css">
         <script src="../js/test.js"></script>
     </head>
-    <body>
-        <div class="container"> 
+    <body style="font-size:larger;">
+        <div class="container-fluid"> 
           <div class="row"> 
-			<h1>Recommended Schedule <?php echo $program ?></h1>
+			<h3>Recommended Schedule <?php echo $program ?></h3>
 
 			
 			<?php 
@@ -1594,7 +1594,7 @@ class Major5{
 						$courses_this_term = array();
 						$courses_added = $class -> addMajorCourses($mysqli, $term, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
 						$current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
-						echo "". $term . " " . $year;
+						echo "<p>". $term . ": " . $year . "</p>";
 						$class -> buildCourseTable($mysqli, $current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
 						increment_time($term, $year);
 						foreach($courses_this_term as $course){ //add group of 5 courses to list of all completed courses
@@ -1617,7 +1617,7 @@ class Major5{
 						$courses_this_term = array();
 						$courses_added = $class -> addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
 						$current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
-						echo "". $term . " " . $year;
+						echo "<p>". $term . ": " . $year . "</p>";
 						$class -> buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_cs_2000, $remaining_cs_3000, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
 						increment_time($term, $year);
 						foreach($courses_this_term as $course){ //add group of 5 courses to list of all completed courses
@@ -1639,7 +1639,7 @@ class Major5{
 						$courses_this_term = array();
 						$courses_added = $class -> addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
 						$current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
-						echo "". $term . " " . $year;
+						echo "<p>". $term . ": " . $year . "</p>";
 						$class -> buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
 						increment_time($term, $year);
 						foreach($courses_this_term as $course){ //add group of 5 courses to list of all completed courses
@@ -1662,7 +1662,7 @@ class Major5{
 						$courses_this_term = array();
 						$courses_added = $class -> addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
 						$current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
-						echo "". $term . " " . $year;
+						echo "<p>". $term . ": " . $year . "</p>";
 						$class -> buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_business_courses, $remaining_cs_3000, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
 						increment_time($term, $year);
 						foreach($courses_this_term as $course){ //add group of 5 courses to list of all completed courses
@@ -1688,7 +1688,7 @@ class Major5{
 						$courses_this_term = array();
 						$courses_added = $class -> addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
 						$current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
-						echo "". $term . " " . $year;
+						echo "<p>". $term . ": " . $year . "</p>";
 						$class -> buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_cs_2000, $remaining_dynamics_courses, $remaining_communication_courses, $remaining_professionalism_courses, $remaining_business_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
 						increment_time($term, $year);
 						foreach($courses_this_term as $course){ //add group of 5 courses to list of all completed courses
