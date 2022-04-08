@@ -82,7 +82,6 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
         <div class="container"> 
           <div class="row"> 
 			<h1>All Required Courses for <?php echo $program ?></h1>
-            <h2>Page 3</h2>
             <p>Select all courses you have ALREADY COMPLETED</p>
 			
 			<?php 

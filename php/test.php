@@ -21,7 +21,6 @@ session_start();
     <body>
         <div class="container">
             <h1>Welcome to the Computer Science Course Scheduler!</h1>
-            <h2>Page 1</h2>
             <p>Please fill out some information to get your schedule.</p>
         </div>
 		

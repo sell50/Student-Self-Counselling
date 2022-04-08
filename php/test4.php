@@ -1565,8 +1565,7 @@ class Major5{
         <div class="container"> 
           <div class="row"> 
 			<h1>Recommended Schedule <?php echo $program ?></h1>
-            <h2>Page 4</h2>
-            
+
 			
 			<?php 
 				//Create list of courses that were checkmarked as completed in the last page

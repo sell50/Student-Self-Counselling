@@ -104,7 +104,6 @@ if ($mysqli -> connect_errno) {
 				<h1>Required courses for <?php echo $_GET['yearq']?> for <?php echo $_GET['programq']?></h1>
 			<?php } ?>
 			
-            <h2>Page 2</h2>
             <p>Please select the courses you have already completed.</p>
 			
 			<?php
