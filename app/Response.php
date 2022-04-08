@@ -1,6 +1,6 @@
 <?php
 
-class Response
+final class Response
 {
     public function __construct(private int $status, private string $content)
     {

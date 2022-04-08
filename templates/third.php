@@ -14,7 +14,7 @@
 
     <form action="/fourth" method="post" id="form">
 
-        <table class="table ">
+        <table class="table">
             <thead>
             <tr>
                 <th scope="col">#</th>
@@ -30,18 +30,18 @@
                     <td class="fw-bold"><?php echo $course['code'] ?></td>
                     <td class="fw-bold"><?php echo $course['name'] ?></td>
                     <td>
-<!--                        <input class="form-check-input"
+                        <input class="form-check-input"
                                type="checkbox"
                                name="courses[]"
                                onclick="checkForm()"
-                               value="<?php /*echo $course['code'] */?>"
-                        >-->
-                        <select class="form-select form-select-sm">
-                            <option selected>-</option>
-                            <option value="1">Fall</option>
-                            <option value="2">Winter</option>
-                            <option value="3">Summer</option>
-                        </select>
+                               value="<?php echo $course['code'] ?>"
+                        >
+                        <!--                        <select class="form-select form-select-sm">
+                                                    <option selected>-</option>
+                                                    <option value="1">Fall</option>
+                                                    <option value="2">Winter</option>
+                                                    <option value="3">Summer</option>
+                                                </select>-->
                     </td>
                 </tr>
                 <?php foreach ($course['requirements'] as $i => $requirement): ?>
@@ -54,6 +54,8 @@
             <?php endforeach; ?>
             </tbody>
         </table>
+
+        <input type="hidden" name="program" value="<?php echo $program ?>">
 
         <div class="mb-3">
             <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>

@@ -7,6 +7,11 @@ class Program extends Model
         return self::get('programs');
     }
 
+    public static function find(int $id): array
+    {
+        return App::getDatabase()->select('select * from programs where id = ' . $id);
+    }
+
     public static function getRequiredCourses(int $program): array
     {
         return App::getDatabase()->selectAll(

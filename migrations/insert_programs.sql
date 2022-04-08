@@ -1,8 +1,7 @@
-INSERT INTO `programs` (`name`)
-VALUES ('Bachelor of Computer Science (General)'),
-       ('Bachelor of Computer Science (Honours)'),
-       ('Bachelor of Computer Science (Honours Applied Computing)'),
-       ('Bachelor of Science (Honours Computer Information Systems)'),
-       ('Bachelor of Science (Honours Computer Science with Software Engineering Specialization)'),
-       ('Bachelor of Commerce (Honours Business Administration and Computer Science)'),
-       ('Bachelor of Mathematics (Honours Mathematics and Computer Science)');
+insert into `programs` (`name`, `total_courses`, `additional_courses`, `art_courses`, `social_courses`,
+                        `art_social_courses`, `elective_courses`)
+values ('Bachelor of Computer Science (General)', 30, 2, 1, 1, 2, 11),
+       ('Bachelor of Computer Science (Honours)', 0, 0, 0, 0, 0, 0),
+       ('Bachelor of Computer Science (Honours Applied Computing)', 0, 0, 0, 0, 0, 0),
+       ('Bachelor of Science (Honours Computer Information Systems)', 0, 0, 0, 0, 0, 0),
+       ('Bachelor of Science (Honours Computer Science with Software Engineering Specialization)', 0, 0, 0, 0, 0, 0);
