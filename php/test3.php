@@ -2,9 +2,9 @@
 session_start();
 require "env.php";
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 
 
@@ -118,7 +118,7 @@ function get_prereqs($mysqli, $coursecode){ //have to pass $mysqli as an argumen
 				$preplist = [];
 				$major_courses = [];
 				while($row = $getcourses -> fetch_row()){
-					echo $row[0];
+					//echo $row[0];
 					$major_courses[] = $row[0]; //add course code to list of all major courses
 					$incomplete_count++;
 					echo "<tr>";

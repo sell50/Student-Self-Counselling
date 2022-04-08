@@ -3,9 +3,9 @@ session_start();
 include "env.php";
 //include "classes.php";
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 //create connection
 $conn = mysqli_connect();
