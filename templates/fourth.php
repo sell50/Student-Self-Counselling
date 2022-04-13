@@ -12,8 +12,8 @@
         </a>
     </header>
 
-    <?php foreach ($tables as $table): ?>
-        <h3><?php echo $table['name'] ?></h3>
+<!--    <?php /*foreach ($tables as $table): */?>
+        <h3><?php /*echo $table['name'] */?></h3>
         <table class="table">
             <thead>
             <tr>
@@ -24,16 +24,16 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($table['courses'] as $index => $course): ?>
+            <?php /*foreach ($table['courses'] as $index => $course): */?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1 ?></th>
-                    <td class="fw-bold"><?php echo $course['code'] ?></td>
-                    <td class="fw-bold"><?php echo $course['name'] ?></td>
+                    <th scope="row"><?php /*echo $index + 1 */?></th>
+                    <td class="fw-bold"><?php /*echo $course['code'] */?></td>
+                    <td class="fw-bold"><?php /*echo $course['name'] */?></td>
                 </tr>
-            <?php endforeach; ?>
+            <?php /*endforeach; */?>
             </tbody>
         </table>
-    <?php endforeach; ?>
+    --><?php /*endforeach; */?>
 
 </div>
 

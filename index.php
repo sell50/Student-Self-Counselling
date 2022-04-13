@@ -17,6 +17,13 @@ require_once __DIR__ . '/app/Models/Semester.php';
 // controllers
 require_once __DIR__ . '/app/Controllers/HomeController.php';
 
+// programs
+require_once __DIR__ . '/app/Programs/Program1.php';
+require_once __DIR__ . '/app/Programs/Program2.php';
+require_once __DIR__ . '/app/Programs/Program3.php';
+require_once __DIR__ . '/app/Programs/Program4.php';
+require_once __DIR__ . '/app/Programs/Program5.php';
+
 // create the application
 $app = new App();
 

@@ -71,13 +71,9 @@ class HomeController extends Controller
     public function fourth(): Response
     {
 
-        $completedCourses = $_POST['courses'];
-
-
+        //$completedCourses = $_POST['courses'];
         //$completedArtCoursesCount = count($completedCourses) + $completedArtCourses + $completedSocialCourses + $completedElectiveCourses;
-
-
-        $program = Program::find($_POST['program']);
+        /*$program = Program::find($_POST['program']);
         $program['courses'] = Program::getRequiredCourses($program['id']);
 
         $remainingCourses = self::removeCompletedCourses($program['courses'], $completedCourses);
@@ -113,6 +109,133 @@ class HomeController extends Controller
 
             // move on to the next semester
             self::incrementTime($time['semester'], $time['year']);
+        }*/
+
+        $mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_NAME']);
+
+        $num_arts = $_POST['art'];
+        $num_soc = $_POST['social'];
+        $num_elec = $_POST['electives'];
+        $program = $_POST['program'];
+
+        //$program = Program::find($_POST['program']);
+
+        $completedCourses = $_POST['courses'];
+        $completedCoursesClean = $_POST['courses'];
+        $num_completed_courses = count($completedCoursesClean);
+        $num_completed_courses += ($num_arts + $num_soc + $num_elec);
+
+        if ($program === 1) {
+            $class = new Major1();
+            $class->get_major_courses($mysqli, $program);
+            $remaining_major_courses = $class->requirement_major($completedCourses, $class->major_courses);
+            $remaining_cs_courses = $class->requirement_cs($completedCourses);
+            $remaining_arts_courses = $class->requirement_arts($num_arts);
+            $remaining_soc_courses = $class->requirement_soc($num_soc);
+            $remaining_artssoc_courses = $class->requirement_ArtsOrSoc($class->get_min_Arts_courses(), $class->get_min_Arts_courses());
+            $remaining_electives = $class->requirement_electives($completedCourses, $num_elec);
+
+            for ($i = 0; $i < ceil((($class->get_num_courses()) - $num_completed_courses) / 5); $i++) { //Create enough tables of 5 to cover all terms the user needs to graduate
+                $courses_this_term = array();
+                $courses_added = $class->addMajorCourses($mysqli, $term, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+                $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
+                echo "" . $term . " " . $year;
+                $class->buildCourseTable($mysqli, $current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
+                increment_time($term, $year);
+                foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
+                    $completedCoursesClean[] = $course;
+                }
+            }
+        } else if ($program == "Bachelor of Computer Science (Honours)") {
+            $class = new Major2();
+            $class->get_major_courses($mysqli, $program['id']);
+            $remaining_major_courses = $class->requirement_major($completedCourses, $class->major_courses);
+            $remaining_cs_2000 = $class->requirement_cs_2000($completedCourses);
+            $remaining_cs_3000 = $class->requirement_cs_3000($completedCourses);
+            $remaining_arts_courses = $class->requirement_arts($num_arts);
+            $remaining_soc_courses = $class->requirement_soc($num_soc);
+            $remaining_artssoc_courses = $class->requirement_ArtsOrSoc($class->get_min_Arts_courses(), $class->get_min_Arts_courses());
+            $remaining_electives = $class->requirement_electives($completedCourses, $num_elec);
+
+            for ($i = 0; $i < ceil((($class->get_num_courses()) - $num_completed_courses) / 5); $i++) { //Create enough tables of 5 to cover all terms the user needs to graduate
+                $courses_this_term = array();
+                $courses_added = $class->addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+                $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
+                echo "" . $term . " " . $year;
+                $class->buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_cs_2000, $remaining_cs_3000, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
+                increment_time($term, $year);
+                foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
+                    $completedCoursesClean[] = $course;
+                }
+            }
+        } else if ($program == "Bachelor of Computer Science (Honours Applied Computing)") {
+            $class = new Major3();
+            $class->get_major_courses($mysqli, $program['id']);
+            $remaining_major_courses = $class->requirement_major($completedCourses, $class->major_courses);
+            $remaining_cs_courses = $class->requirement_cs($completedCourses);
+            $remaining_arts_courses = $class->requirement_arts($num_arts);
+            $remaining_soc_courses = $class->requirement_soc($num_soc);
+            $remaining_artssoc_courses = $class->requirement_ArtsOrSoc($class->get_min_Arts_courses(), $class->get_min_Arts_courses());
+            $remaining_electives = $class->requirement_electives($completedCourses, $num_elec);
+
+            for ($i = 0; $i < ceil((($class->get_num_courses()) - $num_completed_courses) / 5); $i++) { //Create enough tables of 5 to cover all terms the user needs to graduate
+                $courses_this_term = array();
+                $courses_added = $class->addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+                $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
+                echo "" . $term . " " . $year;
+                $class->buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
+                increment_time($term, $year);
+                foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
+                    $completedCoursesClean[] = $course;
+                }
+            }
+        } else if ($program == "Bachelor of Science (Honours Computer Information Systems)") {
+            $class = new Major4();
+            $class->get_major_courses($mysqli, $program['id']);
+            $remaining_major_courses = $class->requirement_major($completedCourses, $class->major_courses);
+            $remaining_business_courses = $class->requirement_business($completedCourses);
+            $remaining_cs_3000 = $class->requirement_cs_3000($completedCourses);
+            $remaining_arts_courses = $class->requirement_arts($num_arts);
+            $remaining_soc_courses = $class->requirement_soc($num_soc);
+            $remaining_artssoc_courses = $class->requirement_ArtsOrSoc($class->get_min_Arts_courses(), $class->get_min_Arts_courses());
+            $remaining_electives = $class->requirement_electives($completedCourses, $num_elec);
+
+            for ($i = 0; $i < ceil((($class->get_num_courses()) - $num_completed_courses) / 5); $i++) { //Create enough tables of 5 to cover all terms the user needs to graduate
+                $courses_this_term = array();
+                $courses_added = $class->addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+                $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
+                echo "" . $term . " " . $year;
+                $class->buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_business_courses, $remaining_cs_3000, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
+                increment_time($term, $year);
+                foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
+                    $completedCoursesClean[] = $course;
+                }
+            }
+        } else if ($program == "Bachelor of Science (Honours Computer Science with Software Engineering Specialization)") {
+            $class = new Major5();
+            $class->get_major_courses($mysqli, $program['id']);
+            $remaining_major_courses = $class->requirement_major($completedCourses, $class->major_courses);
+            $remaining_cs_2000 = $class->requirement_cs_2000($completedCourses);
+            $remaining_arts_courses = $class->requirement_arts($num_arts);
+            $remaining_soc_courses = $class->requirement_soc($num_soc);
+            $remaining_artssoc_courses = $class->requirement_ArtsOrSoc($class->get_min_Arts_courses(), $class->get_min_Arts_courses());
+            $remaining_dynamics_courses = $class->requirement_dynamics($completedCourses);
+            $remaining_communication_courses = $class->requirement_communication($completedCourses);
+            $remaining_professionalism_courses = $class->requirement_professionalism($completedCourses);
+            $remaining_business_courses = $class->requirement_business($completedCourses);
+            $remaining_electives = $class->requirement_electives($completedCourses, $num_elec);
+
+            for ($i = 0; $i < ceil((($class->get_num_courses()) - $num_completed_courses) / 5); $i++) { //Create enough tables of 5 to cover all terms the user needs to graduate
+                $courses_this_term = array();
+                $courses_added = $class->addMajorCourses($mysqli, $term, $year, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+                $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
+                echo "" . $term . " " . $year;
+                $class->buildCourseTable($mysqli, $year, $current_num_courses_added, $courses_this_term, $remaining_cs_2000, $remaining_dynamics_courses, $remaining_communication_courses, $remaining_professionalism_courses, $remaining_business_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
+                increment_time($term, $year);
+                foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
+                    $completedCoursesClean[] = $course;
+                }
+            }
         }
 
         return $this->render('fourth', [
@@ -161,8 +284,6 @@ class HomeController extends Controller
 
     private static function getMajorCourses(string $semester, array &$coursesToTake, array $coursesCompleted): array
     {
-        var_dump($coursesToTake);
-        exit();
         $coursesAdded = [];
         foreach ($coursesToTake as $index => $course) {
             if (count($coursesAdded) === 5) {
@@ -170,6 +291,12 @@ class HomeController extends Controller
             }
 
             if (Course::isAvailable($course['id'], $semester)) {
+
+                var_dump($coursesCompleted);
+                var_dump(
+                    Course::hasCompletedPrerequisites($course['id'], $coursesCompleted)
+                );
+
                 if (
                     empty(Course::getPrerequisites($course['id'])) ||
                     Course::hasCompletedPrerequisites($course['id'], $coursesCompleted)
