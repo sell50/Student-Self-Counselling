@@ -70,10 +70,9 @@ class HomeController extends Controller
 
     public function fourth(): Response
     {
-
-        //$completedCourses = $_POST['courses'];
-        //$completedArtCoursesCount = count($completedCourses) + $completedArtCourses + $completedSocialCourses + $completedElectiveCourses;
-        /*$program = Program::find($_POST['program']);
+        /*$completedCourses = $_POST['courses'];
+        $completedArtCoursesCount = count($completedCourses) + $completedArtCourses + $completedSocialCourses + $completedElectiveCourses;
+        $program = Program::find($_POST['program']);
         $program['courses'] = Program::getRequiredCourses($program['id']);
 
         $remainingCourses = self::removeCompletedCourses($program['courses'], $completedCourses);
@@ -112,6 +111,9 @@ class HomeController extends Controller
         }*/
 
         $mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_NAME']);
+        if ($mysqli->connect_error) {
+            die("Connection failed: " . $mysqli->connect_error);
+        }
 
         $num_arts = $_POST['art'];
         $num_soc = $_POST['social'];
@@ -239,7 +241,7 @@ class HomeController extends Controller
         }
 
         return $this->render('fourth', [
-            'tables' => $tables,
+            'tables' => [],
         ]);
     }
 
@@ -291,12 +293,6 @@ class HomeController extends Controller
             }
 
             if (Course::isAvailable($course['id'], $semester)) {
-
-                var_dump($coursesCompleted);
-                var_dump(
-                    Course::hasCompletedPrerequisites($course['id'], $coursesCompleted)
-                );
-
                 if (
                     empty(Course::getPrerequisites($course['id'])) ||
                     Course::hasCompletedPrerequisites($course['id'], $coursesCompleted)
@@ -306,8 +302,6 @@ class HomeController extends Controller
                 }
             }
         }
-        var_dump($coursesAdded);
-        exit;
         return $coursesAdded;
     }
 
