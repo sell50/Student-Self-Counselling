@@ -20,7 +20,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Code</th>
                 <th scope="col">Name</th>
-                <th scope="col">Semester Taken</th>
+                <th scope="col">Completed</th>
             </tr>
             </thead>
             <tbody>
@@ -55,7 +55,9 @@
             </tbody>
         </table>
 
-        <input type="hidden" name="program" value="<?php echo $program ?>">
+        <input type="hidden" name="program" value="<?php echo $_GET['program'] ?>">
+        <input type="hidden" name="year" value="<?php echo $_GET['year'] ?>">
+        <input type="hidden" name="semester" value="<?php echo $_GET['semester'] ?>">
 
         <div class="mb-3">
             <label for="art" class="form-label">Number of Arts/Languages courses completed:</label>

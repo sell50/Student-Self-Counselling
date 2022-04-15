@@ -16,34 +16,36 @@
 
         <table class="table">
             <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Code</th>
-                <th scope="col">Name</th>
-                <th scope="col">Semesters Offered</th>
-            </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Semesters Offered</th>
+                </tr>
             </thead>
             <tbody>
-            <?php foreach ($courses as $index => $course): ?>
-                <tr>
-                    <th scope="row"><?php echo $index + 1 ?></th>
-                    <td class="fw-bold"><?php echo $course['code'] ?></td>
-                    <td class="fw-bold"><?php echo $course['name'] ?></td>
-                    <td class="fw-bold"><?php echo $course['semesters'] ?></td>
-                </tr>
-                <?php foreach ($course['requirements'] as $i => $requirement): ?>
+                <?php foreach ($courses as $index => $course): ?>
                     <tr>
-                        <th></th>
-                        <td><?php echo $requirement['code'] ?></td>
-                        <td><?php echo $requirement['name'] ?></td>
-                        <td><?php echo $requirement['semesters'] ?></td>
+                        <th scope="row"><?php echo $index + 1 ?></th>
+                        <td class="fw-bold"><?php echo $course['code'] ?></td>
+                        <td class="fw-bold"><?php echo $course['name'] ?></td>
+                        <td class="fw-bold"><?php echo $course['semesters'] ?></td>
                     </tr>
+                    <?php foreach ($course['requirements'] as $i => $requirement): ?>
+                        <tr>
+                            <th></th>
+                            <td><?php echo $requirement['code'] ?></td>
+                            <td><?php echo $requirement['name'] ?></td>
+                            <td><?php echo $requirement['semesters'] ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
-            <?php endforeach; ?>
             </tbody>
         </table>
 
-        <input type="hidden" name="program" value="<?php echo $program ?>">
+        <input type="hidden" name="program" value="<?php echo $_GET['program'] ?>">
+        <input type="hidden" name="year" value="<?php echo $_GET['year'] ?>">
+        <input type="hidden" name="semester" value="<?php echo $_GET['semester'] ?>">
 
         <a href="/" class="btn btn-primary">Back</a>
         <button type="submit" class="btn btn-primary">Next</button>

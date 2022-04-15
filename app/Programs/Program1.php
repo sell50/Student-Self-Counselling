@@ -3,14 +3,26 @@
 //Bachelor of Computer Science (General)
 class Program1
 {
-    private $num_courses = 30;
-    private $num_electives = 11;
-    private $total_ArtsSoc_courses = 2;
-    private $min_Arts_courses = 1;
-    private $min_Soc_courses = 1;
-    private $compsci_courses = 2;
+    private int $num_courses;
+    private int $num_electives;
+    private int $total_ArtsSoc_courses;
+    private int $min_Arts_courses;
+    private int $min_Soc_courses;
+    private int $compsci_courses;
+    public array $major_courses = [];
 
-    public $major_courses = array();
+    public function __construct(int $program)
+    {
+        $program = Program::find($program);
+
+        $this->num_courses = $program['total_courses'];
+        $this->num_electives = $program['elective_courses'];
+        $this->total_ArtsSoc_courses = $program['art_social_courses'];
+        $this->min_Arts_courses = $program['art_courses'];
+        $this->min_Soc_courses = $program['social_courses'];
+        $this->compsci_courses = $program['additional_courses'];
+        $this->major_courses = Program::getRequiredCourses($program['id'], true);
+    }
 
     public function get_num_courses()
     {
@@ -27,27 +39,6 @@ class Program1
         return $this->min_Soc_courses;
     }
 
-    public function get_major_courses($mysqli, $major_id)
-    {
-        if ($courses = $mysqli->query("SELECT course_code FROM courses WHERE id IN (SELECT course_id FROM major_requirements WHERE major_id = " . $major_id . ")")) {
-            $rows = $courses->fetch_all(MYSQLI_NUM);
-            $this->major_courses = flatten_array($mysqli, $rows);
-        }
-    }
-
-    public function substitute(string $value)
-    {
-        if ($value == "MATH-1250") {
-            return "MATH-1260";
-        } else if ($value == "MATH-1720") {
-            return "MATH-1760";
-        } else if ($value == "COMP-3340") {
-            return "COMP-3670";
-        } else {
-            return false;
-        }
-    }
-
     public function requirement_major(array &$user_courses, array &$major_courses)
     {
         foreach ($major_courses as $course) {
@@ -59,8 +50,8 @@ class Program1
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array($this->substitute($course), $user_courses)) {
-                $user_key = array_search($this->substitute($course), $user_courses);
+            } else if (in_array(Helper::substitute($course), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);
@@ -76,7 +67,7 @@ class Program1
         $viable = 0;
         foreach ($user_courses as $course) {
             $lettercode = explode("-", $course);
-            if ($lettercode[0] == "COMP" && !in_array($course, $major_courses)) { //check if a non-major course is a COMP course
+            if ($lettercode[0] == "COMP" && !in_array($course, $this->major_courses)) { //check if a non-major course is a COMP course
                 $user_key = array_search($course, $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
@@ -113,20 +104,20 @@ class Program1
         return $this->num_electives - $electives_completed - $count;
     }
 
-    public function addMajorCourses($mysqli, $term, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
+    public function addMajorCourses($term, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
     {
         $courses_added = 0;
         foreach ($remaining_major_courses as $course) { //Try to add as many major courses as possible
             if ($courses_added == 5) { //stop when we have 5 courses
                 break;
             }
-            if (term_available($mysqli, $term, $course) && get_prereqs($mysqli, $term, $course) == -1) { //course has no requirements, can be taken right away
+            if (Semester::isCourseAvailable($term, $course) && empty(Course::getPrerequisites($course, true))) { //course has no requirements, can be taken right away
                 $courses_this_term[] = $course;
                 $key = array_search($course, $remaining_major_courses); //remove course from array of completed courses and from list of major courses
                 unset($remaining_major_courses[$key]);
                 $remaining_major_courses = array_values($remaining_major_courses);
                 $courses_added++;
-            } else if (term_available($mysqli, $term, $course) && get_prereqs($mysqli, $term, $course) == array_intersect(get_prereqs($mysqli, $term, $course), $completedCoursesClean)) {
+            } else if (Semester::isCourseAvailable($term, $course) && Course::getPrerequisites($course, true) == array_intersect(Course::getPrerequisites($course, true), $completedCoursesClean)) {
                 $courses_this_term[] = $course;
                 $key = array_search($course, $remaining_major_courses); //remove course from array of completed courses and from list of major courses
                 unset($remaining_major_courses[$key]);
@@ -137,7 +128,7 @@ class Program1
         return $courses_added;
     }
 
-    public function buildCourseTable($mysqli, $current_num_courses_added, &$courses_this_term, &$remaining_cs_courses, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, $remaining_electives)
+    public function buildCourseTable($current_num_courses_added, &$courses_this_term, &$remaining_cs_courses, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, $remaining_electives)
     {
         for ($j = 0; $j < (5 - $current_num_courses_added); $j++) {
             if ($remaining_cs_courses > 0) {
@@ -213,16 +204,21 @@ class Program1
                 echo "<td scope=\"row\">" . "No course required" . "</td>";
                 echo "</tr>";
             } else {
-                if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE code = \"" . $course . "\"")) {
-                    $row = $getcourses->fetch_row();
-                    $counter++;
-                    echo "<tr>";
-                    echo "<th style = \"text-align: left\" scope=\"row\">" . $counter . "</th>";
-                    echo "<td scope=\"row\">" . $course . " - " . $row[0] . "</td>";
-                    echo "</tr>";
-                } else {
-                    echo "query failed: " . $mysqli->error;
-                }
+                $counter++;
+                echo "<tr>";
+                echo "<th scope=\"row\">" . $counter . "</th>";
+                echo "<td scope=\"row\">" . $course . "</td>";
+                echo "</tr>";
+                /*  if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE code = \"" . $course . "\"")) {
+                      $row = $getcourses->fetch_row();
+                      $counter++;
+                      echo "<tr>";
+                      echo "<th style = \"text-align: left\" scope=\"row\">" . $counter . "</th>";
+                      echo "<td scope=\"row\">" . $course . " - " . $row[0] . "</td>";
+                      echo "</tr>";
+                  } else {
+                      echo "query failed: " . $mysqli->error;
+                  }*/
             }
         }
 

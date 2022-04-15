@@ -41,7 +41,7 @@
             <label class="form-label" for="semester">Select your semester</label>
             <select class="form-select" name="semester" id="semester" required>
                 <?php foreach ($semesters as $semester): ?>
-                    <option value="<?php echo $semester['id'] ?>"><?php echo $semester['name'] ?></option>
+                    <option><?php echo $semester['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

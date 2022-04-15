@@ -24,6 +24,8 @@ require_once __DIR__ . '/app/Programs/Program3.php';
 require_once __DIR__ . '/app/Programs/Program4.php';
 require_once __DIR__ . '/app/Programs/Program5.php';
 
+require_once __DIR__ . '/app/Helper.php';
+
 // create the application
 $app = new App();
 

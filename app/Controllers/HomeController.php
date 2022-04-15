@@ -20,7 +20,7 @@ class HomeController extends Controller
         foreach (Program::getRequiredCoursesForYear($_GET['program'], $_GET['year']) as $course) {
 
             $requirements = [];
-            foreach (Course::getPrerequisites($course['id']) as $requirement) {
+            foreach (Course::getPrerequisites($course['code']) as $requirement) {
                 $requirements[] = [
                     'id' => $requirement['id'],
                     'code' => $requirement['code'],
@@ -39,14 +39,13 @@ class HomeController extends Controller
         }
 
         return $this->render('second', [
-            'program' => $_GET['program'],
             'courses' => $courses,
         ]);
     }
 
     public function third(): Response
     {
-        if (!isset($_GET['program'])) {
+        if (!isset($_GET['program'], $_GET['year'], $_GET['semester'])) {
             return $this->bad();
         }
 
@@ -58,7 +57,7 @@ class HomeController extends Controller
                 'code' => $course['code'],
                 'name' => $course['name'],
                 'semesters' => self::getSemesters($course['id']),
-                'requirements' => Course::getPrerequisites($course['id']),
+                'requirements' => Course::getPrerequisites($course['code']),
             ];
         }
 
@@ -110,15 +109,34 @@ class HomeController extends Controller
             self::incrementTime($time['semester'], $time['year']);
         }*/
 
-        $mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_NAME']);
-        if ($mysqli->connect_error) {
-            die("Connection failed: " . $mysqli->connect_error);
+        if (!isset(
+            $_POST['program'],
+            $_POST['year'],
+            $_POST['semester'],
+            $_POST['art'],
+            $_POST['social'],
+            $_POST['electives'],
+            $_POST['program'],
+        )) {
+            return $this->bad();
         }
 
+        /* $mysqli = new mysqli($_ENV['DB_HOST'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD'], $_ENV['DB_NAME']);
+         if ($mysqli->connect_error) {
+             die("Connection failed: " . $mysqli->connect_error);
+         }*/
+
+        $program = $_POST['program'];
+        $year = match ($_POST['year']) {
+            '1' => 'First Year',
+            '2' => 'Second Year',
+            '3' => 'Third Year',
+            '4' => 'Fourth Year',
+        };
+        $semester = $_POST['semester'];
         $num_arts = $_POST['art'];
         $num_soc = $_POST['social'];
         $num_elec = $_POST['electives'];
-        $program = $_POST['program'];
 
         //$program = Program::find($_POST['program']);
 
@@ -127,9 +145,10 @@ class HomeController extends Controller
         $num_completed_courses = count($completedCoursesClean);
         $num_completed_courses += ($num_arts + $num_soc + $num_elec);
 
-        if ($program === 1) {
-            $class = new Major1();
-            $class->get_major_courses($mysqli, $program);
+        if ($program == 1) {
+
+            $class = new Program1($_POST['program']);
+            //$class->get_major_courses($mysqli, $program);
             $remaining_major_courses = $class->requirement_major($completedCourses, $class->major_courses);
             $remaining_cs_courses = $class->requirement_cs($completedCourses);
             $remaining_arts_courses = $class->requirement_arts($num_arts);
@@ -138,16 +157,23 @@ class HomeController extends Controller
             $remaining_electives = $class->requirement_electives($completedCourses, $num_elec);
 
             for ($i = 0; $i < ceil((($class->get_num_courses()) - $num_completed_courses) / 5); $i++) { //Create enough tables of 5 to cover all terms the user needs to graduate
-                $courses_this_term = array();
-                $courses_added = $class->addMajorCourses($mysqli, $term, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+                $courses_this_term = [];
+                $courses_added = $class->addMajorCourses($semester, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
+
+
                 $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
-                echo "" . $term . " " . $year;
-                $class->buildCourseTable($mysqli, $current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
-                increment_time($term, $year);
+                echo "" . $semester . " " . $year;
+                $class->buildCourseTable($current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
+
+  /*              var_dump(11);
+                exit(1);*/
+
+                Helper::increment_time($semester, $year);
                 foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
                     $completedCoursesClean[] = $course;
                 }
             }
+
         } else if ($program == "Bachelor of Computer Science (Honours)") {
             $class = new Major2();
             $class->get_major_courses($mysqli, $program['id']);
@@ -245,7 +271,7 @@ class HomeController extends Controller
         ]);
     }
 
-    private static function getSemesters(int $course): string
+ /*   private static function getSemesters(int $course): string
     {
         $semesters = Course::getSemesters($course);
         $semesters = array_column($semesters, 'name');
@@ -353,5 +379,5 @@ class HomeController extends Controller
                 $year = "Fourth Year";
             }
         }
-    }
+    }*/
 }

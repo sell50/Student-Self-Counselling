@@ -4,23 +4,19 @@ class Course extends Model
 {
     public static function find(string $code): array
     {
-        return App::getDatabase()->select('select * from courses where code = ' . $code);
+        return App::getDatabase()->select('select * from courses where code = \'' . $code . '\'');
     }
 
-    public static function getSemesters(int $course): array
+    public static function getPrerequisites(string $code, bool $flatten = false): array
     {
-        return App::getDatabase()->selectAll(
-            'select s.name as name from course_semester cm join semesters s on s.id = cm.semester_id where cm.course_id = ' . $course
+        $course = self::find($code);
+        $data = App::getDatabase()->selectAll(
+            'select c.id as id, c.code as code, c.name as name from course_prerequisite cp join courses c on c.id = cp.prerequisite_id where cp.course_id = ' . $course['id'] . ' order by c.code'
         );
+        return $flatten ? Helper::flatten($data) : $data;
     }
 
-    public static function getPrerequisites(int $course): array
-    {
-        return App::getDatabase()->selectAll(
-            'select c.id as id, c.code as code, c.name as name from course_prerequisite cp join courses c on c.id = cp.prerequisite_id where cp.course_id = ' . $course . ' order by c.code'
-        );
-    }
-
+    // TODO
     public static function hasCompletedPrerequisites(int $course, array $completed): bool
     {
         foreach (Course::getPrerequisites($course) as $course) {
@@ -31,13 +27,11 @@ class Course extends Model
         return true;
     }
 
-    public static function isAvailable(int $course, string $semester): bool
+    // TODO
+    public static function getSemesters(int $course): array
     {
-        //$course = Course::find($course)['id'];
-        $semester = Semester::find($semester)['id'];
-        $data = App::getDatabase()->select(
-            'select * from course_semester where course_id = ' . $course . ' and semester_id = ' . $semester
+        return App::getDatabase()->selectAll(
+            'select s.name as name from course_semester cm join semesters s on s.id = cm.semester_id where cm.course_id = ' . $course
         );
-        return empty($data);
     }
 }
