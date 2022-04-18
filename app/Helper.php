@@ -124,82 +124,63 @@ class Helper
 
     public static function substitute(string $course, int $program_id)
     {
-		if(program_id == 1){
-			if ($course === 'MATH-1250') {
-				return 'MATH-1260';
-			} else if ($course === 'MATH-1720') {
-				return 'MATH-1760';
-			} else if ($course === 'COMP-3340') {
-				return 'COMP-3670';
-			} else {
-				return false;
-			}
-		}
-		else if(program id == 2){
-			if ($value == "MATH-1250") {
-				return "MATH-1260";
-			}
-			else if ($value == "MATH-1720") {
-				return "MATH-1760";
-			}
-			else if ($value == "MATH-3940") {
-				return "MATH-3800";
-			}
-			else if ($value == "STAT-2910") {
-				return "STAT-2920";
-			}
-			else if ($value == "COMP-4960A") {
-				return "COMP-4990A";
-			}
-			else if ($value == "COMP-4960B") {
-				return "COMP-4990B";
-			}
-			else {
-				return false;
-			}
-		}
-		else if(program id == 3){
-			if ($value == "MATH-1250") {
-				return "MATH-1260";
-			} 
-			else if ($value == "MATH-1720") {
-				return "MATH-1760";
-			} 
-			else {
-				return false;
-			}
-		}
-		else if(program id == 4){
-			if ($value == "MATH-1250") {
-				return "MATH-1260";
-			} 
-			else if ($value == "MATH-1720") {
-				return "MATH-1760";
-			} 
-			else {
-				return false;
-			}			
-		}
-		else if(program id == 5){
-			if ($value == "MATH-1250") {
-				return "MATH-1260";
-			} 
-			else if ($value == "MATH-1720") {
-				return "MATH-1760";
-			} 
-			else if ($value == "STAT-2920") {
-				return "STAT-2910";
-			} 
-			else if ($value == "COMP-4960A") {
-				return "COMP-4990A";
-			} 
-			else if ($value == "COMP-4960B") {
-				return "COMP-4990B";
-			} 
-			else {
-				return false;
-			}
-		}
+        if ($program_id === 1) {
+            if ($course === 'MATH-1250') {
+                return 'MATH-1260';
+            } else if ($course === 'MATH-1720') {
+                return 'MATH-1760';
+            } else if ($course === 'COMP-3340') {
+                return 'COMP-3670';
+            } else {
+                return false;
+            }
+        } else if ($program_id === 2) {
+            if ($course === "MATH-1250") {
+                return "MATH-1260";
+            } else if ($course === "MATH-1720") {
+                return "MATH-1760";
+            } else if ($course === "MATH-3940") {
+                return "MATH-3800";
+            } else if ($course === "STAT-2910") {
+                return "STAT-2920";
+            } else if ($course === "COMP-4960A") {
+                return "COMP-4990A";
+            } else if ($course === "COMP-4960B") {
+                return "COMP-4990B";
+            } else {
+                return false;
+            }
+        } else if ($program_id === 3) {
+            if ($course === "MATH-1250") {
+                return "MATH-1260";
+            } else if ($course === "MATH-1720") {
+                return "MATH-1760";
+            } else {
+                return false;
+            }
+        } else if ($program_id === 4) {
+            if ($course === "MATH-1250") {
+                return "MATH-1260";
+            } else if ($course === "MATH-1720") {
+                return "MATH-1760";
+            } else {
+                return false;
+            }
+        } else if ($program_id == 5) {
+            if ($course === "MATH-1250") {
+                return "MATH-1260";
+            } else if ($course === "MATH-1720") {
+                return "MATH-1760";
+            } else if ($course === "STAT-2920") {
+                return "STAT-2910";
+            } else if ($course === "COMP-4960A") {
+                return "COMP-4990A";
+            } else if ($course === "COMP-4960B") {
+                return "COMP-4990B";
+            } else {
+                return false;
+            }
+        }
     }
 
     public static function flatten(array $array): array
@@ -209,5 +190,12 @@ class Helper
             $new[] = $item['code'];
         }
         return $new;
+    }
+
+    public static function getSemestersArray(int $course): string
+    {
+        $semesters = Course::getSemesters($course);
+        $semesters = array_column($semesters, 'name');
+        return join(', ', $semesters);
     }
 }

@@ -25,7 +25,7 @@ class HomeController extends Controller
                     'id' => $requirement['id'],
                     'code' => $requirement['code'],
                     'name' => $requirement['name'],
-                    'semesters' => self::getSemesters($requirement['id']),
+                    'semesters' => Helper::getSemestersArray($requirement['id']),
                 ];
             }
 
@@ -33,7 +33,7 @@ class HomeController extends Controller
                 'id' => $course['id'],
                 'code' => $course['code'],
                 'name' => $course['name'],
-                'semesters' => self::getSemesters($course['id']),
+                'semesters' => Helper::getSemestersArray($course['id']),
                 'requirements' => $requirements,
             ];
         }
@@ -56,7 +56,7 @@ class HomeController extends Controller
                 'id' => $course['id'],
                 'code' => $course['code'],
                 'name' => $course['name'],
-                'semesters' => self::getSemesters($course['id']),
+                'semesters' => Helper::getSemestersArray($course['id']),
                 'requirements' => Course::getPrerequisites($course['code']),
             ];
         }
@@ -165,8 +165,8 @@ class HomeController extends Controller
                 echo "" . $semester . " " . $year;
                 $class->buildCourseTable($current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);
 
-  /*              var_dump(11);
-                exit(1);*/
+                /*              var_dump(11);
+                              exit(1);*/
 
                 Helper::increment_time($semester, $year);
                 foreach ($courses_this_term as $course) { //add group of 5 courses to list of all completed courses
@@ -271,113 +271,107 @@ class HomeController extends Controller
         ]);
     }
 
- /*   private static function getSemesters(int $course): string
-    {
-        $semesters = Course::getSemesters($course);
-        $semesters = array_column($semesters, 'name');
-        return join(', ', $semesters);
-    }
+    /*
+       private static function isCourseInArray(array $courses, string $course): bool
+       {
+           foreach ($courses as $c) {
+               if ($c['code'] === $course) {
+                   return true;
+               }
+           }
+           return false;
+       }
 
-    private static function isCourseInArray(array $courses, string $course): bool
-    {
-        foreach ($courses as $c) {
-            if ($c['code'] === $course) {
-                return true;
-            }
-        }
-        return false;
-    }
+       private static function removeCompletedCourses(array $courses, array $completed): array
+       {
+           foreach ($courses as $index => $course) {
+               if (in_array($course['code'], $completed)) {
+                   unset($courses[$index]);
+               }
+           }
+           return $courses;
+       }
 
-    private static function removeCompletedCourses(array $courses, array $completed): array
-    {
-        foreach ($courses as $index => $course) {
-            if (in_array($course['code'], $completed)) {
-                unset($courses[$index]);
-            }
-        }
-        return $courses;
-    }
+       private static function getRemainingAdditionalCourses(array $courses, array $completed, int $required): int
+       {
+           $coursesCompleted = 0;
+           foreach ($completed as $course) {
+               $courseType = explode('-', $course)[0];
+               if ($courseType === 'COMP' && !self::isCourseInArray($courses, $course)) {
+                   $coursesCompleted++;
+               }
+           }
+           return $required - $coursesCompleted;
+       }
 
-    private static function getRemainingAdditionalCourses(array $courses, array $completed, int $required): int
-    {
-        $coursesCompleted = 0;
-        foreach ($completed as $course) {
-            $courseType = explode('-', $course)[0];
-            if ($courseType === 'COMP' && !self::isCourseInArray($courses, $course)) {
-                $coursesCompleted++;
-            }
-        }
-        return $required - $coursesCompleted;
-    }
+       private static function getMajorCourses(string $semester, array &$coursesToTake, array $coursesCompleted): array
+       {
+           $coursesAdded = [];
+           foreach ($coursesToTake as $index => $course) {
+               if (count($coursesAdded) === 5) {
+                   break;
+               }
 
-    private static function getMajorCourses(string $semester, array &$coursesToTake, array $coursesCompleted): array
-    {
-        $coursesAdded = [];
-        foreach ($coursesToTake as $index => $course) {
-            if (count($coursesAdded) === 5) {
-                break;
-            }
+               if (Course::isAvailable($course['id'], $semester)) {
+                   if (
+                       empty(Course::getPrerequisites($course['id'])) ||
+                       Course::hasCompletedPrerequisites($course['id'], $coursesCompleted)
+                   ) {
+                       $coursesAdded[] = $course;
+                       unset($coursesToTake[$index]);
+                   }
+               }
+           }
+           return $coursesAdded;
+       }
 
-            if (Course::isAvailable($course['id'], $semester)) {
-                if (
-                    empty(Course::getPrerequisites($course['id'])) ||
-                    Course::hasCompletedPrerequisites($course['id'], $coursesCompleted)
-                ) {
-                    $coursesAdded[] = $course;
-                    unset($coursesToTake[$index]);
-                }
-            }
-        }
-        return $coursesAdded;
-    }
+       private static function updateCourses(array &$courses, array &$remaining): void
+       {
+           for ($j = 0; $j < (5 - count($courses)); $j++) {
+               if ($remaining['additional'] > 0) {
 
-    private static function updateCourses(array &$courses, array &$remaining): void
-    {
-        for ($j = 0; $j < (5 - count($courses)); $j++) {
-            if ($remaining['additional'] > 0) {
+                   $courses[] = "CS course";
+                   $remaining['additional']--;
 
-                $courses[] = "CS course";
-                $remaining['additional']--;
+               } else if ($remaining['art'] > 0) {
 
-            } else if ($remaining['art'] > 0) {
+                   $courses[] = "Arts course";
+                   $remaining['art']--;
 
-                $courses[] = "Arts course";
-                $remaining['art']--;
+               } else if ($remaining['social'] > 0) {
 
-            } else if ($remaining['social'] > 0) {
+                   $courses[] = "Soc course";
+                   $remaining['social']--;
 
-                $courses[] = "Soc course";
-                $remaining['social']--;
+               } else if ($remaining['art_social'] > 0) {
 
-            } else if ($remaining['art_social'] > 0) {
+                   $courses[] = "Arts/Soc course";
+                   $remaining['art_social']--;
 
-                $courses[] = "Arts/Soc course";
-                $remaining['art_social']--;
+               } else if ($remaining['electives'] > 0) {
 
-            } else if ($remaining['electives'] > 0) {
+                   $courses[] = "Elective course";
+                   $remaining['electives']--;
 
-                $courses[] = "Elective course";
-                $remaining['electives']--;
+               } else {
+                   $courses[] = "No course";
+               }
+           }
+       }
 
-            } else {
-                $courses[] = "No course";
-            }
-        }
-    }
-
-    private static function incrementTime(&$semester, &$year)
-    {
-        if ($semester === "Fall") {
-            $semester = "Winter";
-        } else if ($semester === "Winter") {
-            $semester = "Fall";
-            if ($year === "First Year") {
-                $year = "Second Year";
-            } else if ($year === "Second Year") {
-                $year = "Third Year";
-            } else if ($year === "Third Year") {
-                $year = "Fourth Year";
-            }
-        }
-    }*/
+       private static function incrementTime(&$semester, &$year)
+       {
+           if ($semester === "Fall") {
+               $semester = "Winter";
+           } else if ($semester === "Winter") {
+               $semester = "Fall";
+               if ($year === "First Year") {
+                   $year = "Second Year";
+               } else if ($year === "Second Year") {
+                   $year = "Third Year";
+               } else if ($year === "Third Year") {
+                   $year = "Fourth Year";
+               }
+           }
+       }*/
 }

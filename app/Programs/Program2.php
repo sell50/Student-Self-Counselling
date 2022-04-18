@@ -3,19 +3,19 @@
 // Bachelor of Computer Science (Honors)
 class Program2
 {
-	private int $num_courses;
+    private int $num_courses;
     private int $num_electives;
     private int $total_ArtsSoc_courses;
     private int $min_Arts_courses;
     private int $min_Soc_courses;
     private int $compsci_courses;
     public array $major_courses = [];
-	
+
 
     private int $compsci_courses_3000;
     private int $compsci_courses_2000;
-	
-	public function __construct(int $program)
+
+    public function __construct(int $program)
     {
         $program = Program::find($program);
 
@@ -26,17 +26,17 @@ class Program2
         $this->min_Soc_courses = $program['social_courses'];
         //$this->compsci_courses = $program['additional_courses'];	//this program does not have this requirement, but has the cs courses 2000 and 3000 requirement instead
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
-		
-		//temporarily hardcoded values? Retrieval of these values from the db requires adding additional columns to programs table
-		$this->compsci_courses_2000 = 3; 
-		$this->compsci_courses_3000 = 1;
+
+        //temporarily hardcoded values? Retrieval of these values from the db requires adding additional columns to programs table
+        $this->compsci_courses_2000 = 3;
+        $this->compsci_courses_3000 = 1;
     }
 
-	public function get_num_courses()
+    public function get_num_courses()
     {
         return $this->num_courses;
     }
-	
+
     public function get_min_Arts_courses()
     {
         return $this->min_Arts_courses;
@@ -46,8 +46,8 @@ class Program2
     {
         return $this->min_Soc_courses;
     }
-	
-	public function requirement_major(array &$user_courses, array &$major_courses)
+
+    public function requirement_major(array &$user_courses, array &$major_courses)
     {
         foreach ($major_courses as $course) {
             if (in_array($course, $user_courses)) { //check if user has completed a course within the list of major courses, or if they have completed its substitute
@@ -77,7 +77,7 @@ class Program2
         foreach ($user_courses as $course) {
             $lettercode = explode("-", $course);
             $exceptions = array("COMP-2057", "COMP-2077", "COMP-2097", "COMP-2707", "COMP-3057", "COMP-3077"); //These courses do not count for this requirement
-            if ($lettercode[0] == "COMP" && (int)$lettercode[1] >= 2000 && !in_array($course, $major_courses) && !in_array($course, $exceptions)) { //check if a non-major course is a COMP course
+            if ($lettercode[0] == "COMP" && (int)$lettercode[1] >= 2000 && !in_array($course, $this->major_courses) && !in_array($course, $exceptions)) { //check if a non-major course is a COMP course
                 $user_key = array_search($course, $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
@@ -92,7 +92,7 @@ class Program2
         $viable = 0;
         foreach ($user_courses as $course) {
             $lettercode = explode("-", $course);
-            if ($lettercode[0] == "COMP" && (int)$lettercode[1] >= 3000 && !in_array($course, $major_courses)) { //check if a non-major course is a COMP course
+            if ($lettercode[0] == "COMP" && (int)$lettercode[1] >= 3000 && !in_array($course, $this->major_courses)) { //check if a non-major course is a COMP course
                 $user_key = array_search($course, $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
