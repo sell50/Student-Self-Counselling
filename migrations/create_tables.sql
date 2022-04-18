@@ -1,13 +1,19 @@
 CREATE TABLE `programs`
 (
-    `id`                 int unsigned auto_increment primary key,
-    `name`               varchar(100),
-    `total_courses`      tinyint unsigned,
-    `additional_courses` tinyint unsigned,
-    `art_courses`        tinyint unsigned,
-    `social_courses`     tinyint unsigned,
-    `art_social_courses` tinyint unsigned,
-    `elective_courses`   tinyint unsigned
+    `id`                      int unsigned auto_increment primary key,
+    `name`                    varchar(100),
+    `total_courses`           tinyint unsigned,
+    `additional_courses`      tinyint unsigned,
+    `art_courses`             tinyint unsigned,
+    `social_courses`          tinyint unsigned,
+    `art_social_courses`      tinyint unsigned,
+    `elective_courses`        tinyint unsigned,
+    `2000_courses`            tinyint unsigned,
+    `3000_courses`            tinyint unsigned,
+    `business_courses`        tinyint unsigned,
+    `dynamic_courses`         tinyint unsigned,
+    `communication_courses`   tinyint unsigned,
+    `professionalism_courses` tinyint unsigned
 );
 
 CREATE TABLE `courses`
