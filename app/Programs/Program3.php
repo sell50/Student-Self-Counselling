@@ -69,7 +69,7 @@ class Program3
         $viable = 0;
         foreach ($user_courses as $course) {
             $lettercode = explode("-", $course);
-            if ($lettercode[0] == "COMP" && !in_array($course, $major_courses)) { //check if a non-major course is a COMP course
+            if ($lettercode[0] == "COMP" && !in_array($course, $this->major_courses)) { //check if a non-major course is a COMP course
                 $user_key = array_search($course, $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
@@ -106,7 +106,7 @@ class Program3
         return $this->num_electives - $electives_completed - $count;
     }
 
-    public function addMajorCourses($mysqli, $term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
+    public function addMajorCourses($term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
     {
         $courses_added = 0;
         foreach ($remaining_major_courses as $course) { //Try to add as many major courses as possible
@@ -135,7 +135,7 @@ class Program3
         return $courses_added;
     }
 
-    public function buildCourseTable($mysqli, $year, $current_num_courses_added, &$courses_this_term, &$remaining_cs_courses, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, &$remaining_electives)
+    public function buildCourseTable($year, $current_num_courses_added, &$courses_this_term, &$remaining_cs_courses, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, &$remaining_electives)
     {
         for ($j = 0; $j < (5 - $current_num_courses_added); $j++) {
             if ($remaining_cs_courses > 0) {
@@ -211,7 +211,7 @@ class Program3
                 echo "<td scope=\"row\">" . "No course required" . "</td>";
                 echo "</tr>";
             } else {
-                if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE course_code = \"" . $course . "\"")) {
+                /*if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE course_code = \"" . $course . "\"")) {
                     $row = $getcourses->fetch_row();
                     $counter++;
                     echo "<tr>";
@@ -220,7 +220,7 @@ class Program3
                     echo "</tr>";
                 } else {
                     echo "query failed: " . $mysqli->error;
-                }
+                }*/
             }
         }
 

@@ -19,6 +19,6 @@ class Semester extends Model
         $data = App::getDatabase()->select(
             'select * from course_semester where course_id = ' . $course . ' and semester_id = ' . $semester
         );
-        return empty($data);
+        return !empty($data);
     }
 }

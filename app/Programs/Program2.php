@@ -12,7 +12,6 @@ class Program2
     private int $compsci_courses;
     public array $major_courses = [];
 
-
     private int $compsci_courses_3000;
     private int $compsci_courses_2000;
 
@@ -131,13 +130,14 @@ class Program2
         return $this->num_electives - $electives_completed - $count;
     }
 
-    public function addMajorCourses($mysqli, $term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
+    public function addMajorCourses($term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
     {
+        var_dump($remaining_major_courses);
         $courses_added = 0;
         foreach ($remaining_major_courses as $course) { //Try to add as many major courses as possible
             if ($courses_added == 5) { //stop when we have 5 courses
                 break;
-            } else if (($course == "COMP-4960A" || ($course == "COMP-4960B" && Course::getPrerequisites($course, true) == array_intersect(Course::getPrerequisites($course, true), $completedCoursesClean)) || $course == "COMP-4990A" || ($course == "COMP-4990B" && get_prereqs($mysqli, $term, $course) == array_intersect(get_prereqs($mysqli, $term, $course), $completedCoursesClean))) && term_available($mysqli, $term, $course) && $year == "Fourth Year") {
+            } else if (($course == "COMP-4960A" || ($course == "COMP-4960B" && Course::getPrerequisites($course, true) == array_intersect(Course::getPrerequisites($course, true), $completedCoursesClean)) || $course == "COMP-4990A" || ($course == "COMP-4990B" && Course::getPrerequisites($course, true) == array_intersect(Course::getPrerequisites($course, true), $completedCoursesClean))) && Course::getPrerequisites($course, true) && $year == "Fourth Year") {
                 $courses_this_term[] = $course;
                 $key = array_search($course, $remaining_major_courses); //remove course from array of completed courses and from list of major courses
                 unset($remaining_major_courses[$key]);
@@ -160,7 +160,7 @@ class Program2
         return $courses_added;
     }
 
-    public function buildCourseTable($mysqli, $year, $current_num_courses_added, &$courses_this_term, &$remaining_cs_2000, &$remaining_cs_3000, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, &$remaining_electives)
+    public function buildCourseTable($year, $current_num_courses_added, &$courses_this_term, &$remaining_cs_2000, &$remaining_cs_3000, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, &$remaining_electives)
     {
         for ($j = 0; $j < (5 - $current_num_courses_added); $j++) {
             if ($remaining_cs_2000 > 0 && $year != "First Year") {
@@ -245,17 +245,19 @@ class Program2
                 echo "<td scope=\"row\">" . "CS Course level 3XXX-4XXX" . "</td>";
                 echo "</tr>";
             } else {
-                if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE course_code = \"" . $course . "\"")) {
-                    $row = $getcourses->fetch_row();
-                    $counter++;
-                    echo "<tr>";
+                $counter++;
+                echo "<tr>";
+                echo "<th scope=\"row\">" . $counter . "</th>";
+                echo "<td scope=\"row\">" . $course . "</td>";
+                echo "</tr>";
+/*                    echo "<tr>";
                     echo "<th style = \"text-align: left\" scope=\"row\">" . $counter . "</th>";
                     echo "<td scope=\"row\">" . $course . " - " . $row[0] . "</td>";
                     //echo "<td scope=\"row\">". $course. " - "."</td>";
                     echo "</tr>";
                 } else {
                     echo "query failed: " . $mysqli->error;
-                }
+                }*/
             }
         }
 

@@ -75,17 +75,17 @@
         </div>
 
         <a href="/" class="btn btn-primary">Back</a>
-        <button class="btn btn-primary" type="submit" id="submit" disabled>Submit</button>
+        <button class="btn btn-primary" type="submit" id="submit">Submit</button>
     </form>
 
 </div>
 
-<script type="application/javascript">
+<!--<script type="application/javascript">
     function checkForm() {
         const form = new FormData(document.getElementById("form"));
         document.getElementById("submit").disabled = !form.has("courses[]");
     }
-</script>
+</script>-->
 
 </body>
 </html>
