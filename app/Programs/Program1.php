@@ -74,6 +74,9 @@ class Program1
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> compsci_courses){
+					break;
+				}
             }
         }
         return ($this->compsci_courses - $viable); //return number of additional CS courses we need
@@ -96,14 +99,17 @@ class Program1
 
     public function requirement_electives(array &$user_courses, $electives_completed)
     { //Take extra courses that were completed but don't account for any other requirement as extra electives
-        $count = 0;
+        $viable = 0;
         foreach ($user_courses as $course) {
             $user_key = array_search($course, $user_courses);
             unset($user_courses[$user_key]);
             $user_courses = array_values($user_courses);
-            $count++;
+            $viable++;
+			if($viable == $this -> num_electives - $electives_completed ){
+					break;
+			}
         }
-        return $this->num_electives - $electives_completed - $count;
+        return $this->num_electives - $electives_completed - $viable;
     }
 
     public function addMajorCourses($term, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)

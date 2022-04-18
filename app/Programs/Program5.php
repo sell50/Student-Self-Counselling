@@ -2,41 +2,39 @@
 
 class Program5
 {
-    private int $program_id;
-    private int $num_courses;
+	private int $num_courses;
     private int $num_electives;
     private int $total_ArtsSoc_courses;
     private int $min_Arts_courses;
     private int $min_Soc_courses;
     private int $compsci_courses;
     public array $major_courses = [];
-
-    private int $compsci_courses_2000;
+	
+	private int $compsci_courses_2000;
     private int $dynamics_courses;
     private int $communication_course;
     private int $professionalism_courses;
     private int $business_courses;
-
-    public function __construct(int $program)
+	
+	public function __construct(int $program)
     {
         $program = Program::find($program);
 
-        $this->program_id = $program['id'];
         $this->num_courses = $program['total_courses'];
         $this->num_electives = $program['elective_courses'];
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        $this->compsci_courses = $program['additional_courses'];    //program does not have this requirement
-        $this->major_courses = Program::getRequiredCourses($program['id'], true);
-        $compsci_courses_2000 = 1;
-        $dynamics_courses = 1;
-        $communication_courses = 1;
-        $professionalism_courses = 1;
-        $business_courses = 1;
+        $this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
+        $this->major_courses = Program::getRequiredCourses($program['id'], true);		
+		$compsci_courses_2000 = 1;
+		$dynamics_courses = 1;
+		$communication_courses = 1;
+		$professionalism_courses = 1;
+		$business_courses = 1;
 
     }
-
+	
 
     public function get_num_courses()
     {
@@ -64,8 +62,8 @@ class Program5
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array(Helper::substitute($course, $this->program_id), $user_courses)) {
-                $user_key = array_search(Helper::substitute($course, $this->program_id), $user_courses);
+            } else if (in_array(Helper::substitute($course, $program['id']), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course, $program['id']), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);
@@ -86,6 +84,9 @@ class Program5
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> compsci_courses_2000){
+					break;
+				}
             }
         }
         return ($this->compsci_courses_2000 - $viable); //return number of additional CS courses we need
@@ -101,6 +102,9 @@ class Program5
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> dynamics_courses){
+					break;
+				}
             }
         }
         return ($this->dynamics_courses - $viable); //return number of additional dynamics courses we need
@@ -116,6 +120,9 @@ class Program5
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> communication_courses){
+					break;
+				}
             }
         }
         return ($this->communication_courses - $viable); //return number of additional communication courses we need
@@ -131,6 +138,9 @@ class Program5
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> professionalism_courses){
+					break;
+				}
             }
         }
         return ($this->professionalism_courses - $viable); //return number of additional professionalism courses we need
@@ -146,6 +156,9 @@ class Program5
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> business_courses){
+					break;
+				}
             }
         }
         return ($this->business_courses - $viable); //return number of additional business courses we need
@@ -168,14 +181,17 @@ class Program5
 
     public function requirement_electives(array &$user_courses, $electives_completed)
     { //Take extra courses that were completed but don't account for any other requirement as extra electives
-        $count = 0;
+        $viable = 0;
         foreach ($user_courses as $course) {
             $user_key = array_search($course, $user_courses);
             unset($user_courses[$user_key]);
             $user_courses = array_values($user_courses);
-            $count++;
+            $viable++;
+			if($viable == $this -> num_electives - $electives_completed){
+				break;
+			}
         }
-        return $this->num_electives - $electives_completed - $count;
+        return $this->num_electives - $electives_completed - $viable;
     }
 
     public function addMajorCourses($mysqli, $term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)

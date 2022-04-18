@@ -2,7 +2,6 @@
 
 class Program3
 {
-    private int $program_id;
     private int $num_courses;
     private int $num_electives;
     private int $total_ArtsSoc_courses;
@@ -10,20 +9,19 @@ class Program3
     private int $min_Soc_courses;
     private int $compsci_courses;
     public array $major_courses = [];
-
-    public function __construct(int $program)
+	
+	public function __construct(int $program)
     {
         $program = Program::find($program);
 
-        $this->program_id = $program['id'];
         $this->num_courses = $program['total_courses'];
         $this->num_electives = $program['elective_courses'];
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        $this->compsci_courses = $program['additional_courses'];
+        $this->compsci_courses = $program['additional_courses'];	
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
-
+		
     }
 
     public function get_num_courses()
@@ -52,8 +50,8 @@ class Program3
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array(Helper::substitute($course, $this->program_id), $user_courses)) {
-                $user_key = array_search(Helper::substitute($course, $this->program_id), $user_courses);
+            } else if (in_array(Helper::substitute($course, $program['id']), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course, $program['id']), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);
@@ -69,11 +67,14 @@ class Program3
         $viable = 0;
         foreach ($user_courses as $course) {
             $lettercode = explode("-", $course);
-            if ($lettercode[0] == "COMP" && !in_array($course, $this->major_courses)) { //check if a non-major course is a COMP course
+            if ($lettercode[0] == "COMP" && !in_array($course, $major_courses)) { //check if a non-major course is a COMP course
                 $user_key = array_search($course, $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> compsci_courses){
+					break;
+				}
             }
         }
         return ($this->compsci_courses - $viable); //return number of additional CS courses we need
@@ -96,17 +97,20 @@ class Program3
 
     public function requirement_electives(array &$user_courses, $electives_completed)
     { //Take extra courses that were completed but don't account for any other requirement as extra electives
-        $count = 0;
+        $viable = 0;
         foreach ($user_courses as $course) {
             $user_key = array_search($course, $user_courses);
             unset($user_courses[$user_key]);
             $user_courses = array_values($user_courses);
-            $count++;
+            $viable++;
+			if($viable == $this -> num_electives - $electives_completed){
+				break;
+			}
         }
-        return $this->num_electives - $electives_completed - $count;
+        return $this->num_electives - $electives_completed - $viable;
     }
 
-    public function addMajorCourses($term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
+    public function addMajorCourses($mysqli, $term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
     {
         $courses_added = 0;
         foreach ($remaining_major_courses as $course) { //Try to add as many major courses as possible
@@ -135,7 +139,7 @@ class Program3
         return $courses_added;
     }
 
-    public function buildCourseTable($year, $current_num_courses_added, &$courses_this_term, &$remaining_cs_courses, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, &$remaining_electives)
+    public function buildCourseTable($mysqli, $year, $current_num_courses_added, &$courses_this_term, &$remaining_cs_courses, &$remaining_arts_courses, &$remaining_soc_courses, &$remaining_artssoc_courses, &$remaining_electives)
     {
         for ($j = 0; $j < (5 - $current_num_courses_added); $j++) {
             if ($remaining_cs_courses > 0) {
@@ -211,7 +215,7 @@ class Program3
                 echo "<td scope=\"row\">" . "No course required" . "</td>";
                 echo "</tr>";
             } else {
-                /*if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE course_code = \"" . $course . "\"")) {
+                if ($getcourses = $mysqli->query("SELECT name FROM courses WHERE course_code = \"" . $course . "\"")) {
                     $row = $getcourses->fetch_row();
                     $counter++;
                     echo "<tr>";
@@ -220,7 +224,7 @@ class Program3
                     echo "</tr>";
                 } else {
                     echo "query failed: " . $mysqli->error;
-                }*/
+                }
             }
         }
 

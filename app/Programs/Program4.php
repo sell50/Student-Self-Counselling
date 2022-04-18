@@ -2,34 +2,32 @@
 
 class Program4
 {
-    private int $program_id;
-    private int $num_courses;
+	private int $num_courses;
     private int $num_electives;
     private int $total_ArtsSoc_courses;
     private int $min_Arts_courses;
     private int $min_Soc_courses;
     private int $compsci_courses;
     public array $major_courses = [];
-
+	
     private int $compsci_courses_3000;
     private int $business_courses;
-
-    public function __construct(int $program)
+	
+	public function __construct(int $program)
     {
         $program = Program::find($program);
 
-        $this->program_id = $program['id'];
         $this->num_courses = $program['total_courses'];
         $this->num_electives = $program['elective_courses'];
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        $this->compsci_courses = $program['additional_courses'];    //program does not have this requirement
+        $this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
-        array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110"); //add business courses to list of majors
-
-        $compsci_courses_3000 = 2;
-        $business_courses = 4;
+		array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110"); //add business courses to list of majors
+		
+		$compsci_courses_3000 = 2;
+		$business_courses = 4;
 
     }
 
@@ -59,8 +57,8 @@ class Program4
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array(Helper::substitute($course, $this->program_id), $user_courses)) {
-                $user_key = array_search(Helper::substitute($course, $this->program_id), $user_courses);
+            } else if (in_array(Helper::substitute($course, $program['id']), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course, $program['id']), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);
@@ -81,6 +79,9 @@ class Program4
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> compsci_courses_3000){
+					break;
+				}
             }
         }
         return ($this->compsci_courses_3000 - $viable); //return number of additional CS courses we need
@@ -97,6 +98,9 @@ class Program4
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $viable++;
+				if($viable == $this -> business_courses){
+					break;
+				}
             }
         }
         return ($this->business_courses - $viable); //return number of additional business courses we need
@@ -119,14 +123,17 @@ class Program4
 
     public function requirement_electives(array &$user_courses, $electives_completed)
     { //Take extra courses that were completed but don't account for any other requirement as extra electives
-        $count = 0;
+        $viable = 0;
         foreach ($user_courses as $course) {
             $user_key = array_search($course, $user_courses);
             unset($user_courses[$user_key]);
             $user_courses = array_values($user_courses);
-            $count++;
+            $viable++;
+			if($viable == $this -> num_electives - $electives_completed){
+				break;
+			}
         }
-        return $this->num_electives - $electives_completed - $count;
+        return $this->num_electives - $electives_completed - $viable;
     }
 
     public function addMajorCourses($mysqli, $term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
