@@ -3,6 +3,7 @@
 // Bachelor of Computer Science (Honors)
 class Program2
 {
+    private int $program_id;
     private int $num_courses;
     private int $num_electives;
     private int $total_ArtsSoc_courses;
@@ -19,12 +20,13 @@ class Program2
     {
         $program = Program::find($program);
 
+        $this->program_id = $program['id'];
         $this->num_courses = $program['total_courses'];
         $this->num_electives = $program['elective_courses'];
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        $this->compsci_courses = $program['additional_courses'];	//this program does not have this requirement, but has the cs courses 2000 and 3000 requirement instead
+        $this->compsci_courses = $program['additional_courses'];    //this program does not have this requirement, but has the cs courses 2000 and 3000 requirement instead
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
 
         //temporarily hardcoded values? Retrieval of these values from the db requires adding additional columns to programs table
@@ -58,8 +60,8 @@ class Program2
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array(Helper::substitute($course, $program['id']), $user_courses)) {
-                $user_key = array_search(Helper::substitute($course, $program['id']), $user_courses);
+            } else if (in_array(Helper::substitute($course, $this->program_id), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course, $this->program_id), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);

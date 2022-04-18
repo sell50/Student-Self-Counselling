@@ -160,7 +160,6 @@ class HomeController extends Controller
                 $courses_this_term = [];
                 $courses_added = $class->addMajorCourses($semester, $remaining_major_courses, $courses_this_term, $completedCoursesClean);
 
-
                 $current_num_courses_added = $courses_added; //creating this variable to store the number of courses we have added up to this point. Do this to avoid using "$j < (5-$courses_added)" because we want to increment $courses_added
                 echo "" . $semester . " " . $year;
                 $class->buildCourseTable($current_num_courses_added, $courses_this_term, $remaining_cs_courses, $remaining_arts_courses, $remaining_soc_courses, $remaining_artssoc_courses, $remaining_electives);

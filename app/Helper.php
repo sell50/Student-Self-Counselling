@@ -181,6 +181,7 @@ class Helper
                 return false;
             }
         }
+        return false;
     }
 
     public static function flatten(array $array): array

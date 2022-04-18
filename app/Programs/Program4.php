@@ -2,32 +2,34 @@
 
 class Program4
 {
-	private int $num_courses;
+    private int $program_id;
+    private int $num_courses;
     private int $num_electives;
     private int $total_ArtsSoc_courses;
     private int $min_Arts_courses;
     private int $min_Soc_courses;
     private int $compsci_courses;
     public array $major_courses = [];
-	
+
     private int $compsci_courses_3000;
     private int $business_courses;
-	
-	public function __construct(int $program)
+
+    public function __construct(int $program)
     {
         $program = Program::find($program);
 
+        $this->program_id = $program['id'];
         $this->num_courses = $program['total_courses'];
         $this->num_electives = $program['elective_courses'];
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        $this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
+        $this->compsci_courses = $program['additional_courses'];    //program does not have this requirement
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
-		array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110"); //add business courses to list of majors
-		
-		$compsci_courses_3000 = 2;
-		$business_courses = 4;
+        array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110"); //add business courses to list of majors
+
+        $compsci_courses_3000 = 2;
+        $business_courses = 4;
 
     }
 
@@ -57,8 +59,8 @@ class Program4
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array(Helper::substitute($course, $program['id']), $user_courses)) {
-                $user_key = array_search(Helper::substitute($course, $program['id']), $user_courses);
+            } else if (in_array(Helper::substitute($course, $this->program_id), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course, $this->program_id), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);
