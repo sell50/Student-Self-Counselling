@@ -2,15 +2,34 @@
 
 class Program4
 {
-    private $num_courses = 40;
-    private $num_electives = 6;
-    private $total_ArtsSoc_courses = 3;
-    private $min_Arts_courses = 1;
-    private $min_Soc_courses = 1;
-    private $compsci_courses_3000 = 2;
-    private $business_courses = 4;
+	private int $num_courses;
+    private int $num_electives;
+    private int $total_ArtsSoc_courses;
+    private int $min_Arts_courses;
+    private int $min_Soc_courses;
+    private int $compsci_courses;
+    public array $major_courses = [];
+	
+    private int $compsci_courses_3000;
+    private int $business_courses;
+	
+	public function __construct(int $program)
+    {
+        $program = Program::find($program);
 
-    public $major_courses = array();
+        $this->num_courses = $program['total_courses'];
+        $this->num_electives = $program['elective_courses'];
+        $this->total_ArtsSoc_courses = $program['art_social_courses'];
+        $this->min_Arts_courses = $program['art_courses'];
+        $this->min_Soc_courses = $program['social_courses'];
+        //$this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
+        $this->major_courses = Program::getRequiredCourses($program['id'], true);
+		array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110"); //add business courses to list of majors
+		
+		$compsci_courses_3000 = 2;
+		$business_courses = 4;
+
+    }
 
     public function get_num_courses()
     {
@@ -27,26 +46,6 @@ class Program4
         return $this->min_Soc_courses;
     }
 
-    public function get_major_courses($mysqli, $major_id)
-    {
-        if ($courses = $mysqli->query("SELECT course_code FROM courses WHERE id IN (SELECT course_id FROM major_requirements WHERE major_id = " . $major_id . ")")) {
-            $rows = $courses->fetch_all(MYSQLI_NUM);
-            $this->major_courses = flatten_array($mysqli, $rows);
-        }
-        array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110");
-    }
-
-    public function substitute(string $value)
-    {
-        if ($value == "MATH-1250") {
-            return "MATH-1260";
-        } else if ($value == "MATH-1720") {
-            return "MATH-1760";
-        } else {
-            return false;
-        }
-    }
-
     public function requirement_major(array &$user_courses, array &$major_courses)
     {
         foreach ($major_courses as $course) {
@@ -58,8 +57,8 @@ class Program4
                 $major_key = array_search($course, $major_courses);
                 unset($major_courses[$major_key]);
                 $major_courses = array_values($major_courses);
-            } else if (in_array($this->substitute($course), $user_courses)) {
-                $user_key = array_search($this->substitute($course), $user_courses);
+            } else if (in_array(Helper::substitute($course, $program['id']), $user_courses)) {
+                $user_key = array_search(Helper::substitute($course, $program['id']), $user_courses);
                 unset($user_courses[$user_key]);
                 $user_courses = array_values($user_courses);
                 $major_key = array_search($course, $major_courses);
@@ -131,23 +130,23 @@ class Program4
     public function addMajorCourses($mysqli, $term, $year, &$remaining_major_courses, &$courses_this_term, $completedCoursesClean)
     {
         $courses_added = 0;
-        $first_year_business = array("ECON-1100", "ECON-1110", "STEN-1000", "MKTG-1310", "ACCT-1510");
+        $first_year_business = array("ECON-1100", "ECON-1110", "STEN-1000", "MKTG-1310", "ACCT-1510"); //list of first year business courses which are important for this program
         foreach ($remaining_major_courses as $course) { //Try to add as many major courses as possible
             if ($courses_added == 5) { //stop when we have 5 courses
                 break;
-            } else if (($course == "COMP-4990A" || ($course == "COMP-4990B" && get_prereqs($mysqli, $term, $course) == array_intersect(get_prereqs($mysqli, $term, $course), $completedCoursesClean))) && term_available($mysqli, $term, $course) && $year == "Fourth Year") {
+            } else if (($course == "COMP-4990A" || ($course == "COMP-4990B" && Course::getPrerequisites($course, true) == array_intersect(Course::getPrerequisites($course, true), $completedCoursesClean))) && Semester::isCourseAvailable($term, $course) && $year == "Fourth Year") {
                 $courses_this_term[] = $course;
                 $key = array_search($course, $remaining_major_courses); //remove course from array of completed courses and from list of major courses
                 unset($remaining_major_courses[$key]);
                 $remaining_major_courses = array_values($remaining_major_courses);
                 $courses_added++;
-            } else if (($course != "COMP-4990A" && $course != "COMP-4990B") && term_available($mysqli, $term, $course) && get_prereqs($mysqli, $term, $course) == -1) { //course has no requirements, can be taken right away
+            } else if (($course != "COMP-4990A" && $course != "COMP-4990B") && Semester::isCourseAvailable($term, $course) && empty(Course::getPrerequisites($course, true))) { //course has no requirements, can be taken right away
                 $courses_this_term[] = $course;
                 $key = array_search($course, $remaining_major_courses);
                 unset($remaining_major_courses[$key]);
                 $remaining_major_courses = array_values($remaining_major_courses);
                 $courses_added++;
-            } else if (($course != "COMP-4990A" && $course != "COMP-4990B") && term_available($mysqli, $term, $course) && get_prereqs($mysqli, $term, $course) == array_intersect(get_prereqs($mysqli, $term, $course), $completedCoursesClean)) { //does the student have all requirements?
+            } else if (($course != "COMP-4990A" && $course != "COMP-4990B") && Semester::isCourseAvailable($term, $course) && Course::getPrerequisites($course, true) == array_intersect(Course::getPrerequisites($course, true), $completedCoursesClean)) { //does the student have all requirements?
                 $courses_this_term[] = $course;
                 $key = array_search($course, $remaining_major_courses);
                 unset($remaining_major_courses[$key]);
@@ -280,3 +279,4 @@ class Program4
     }
 }
 
+?>
