@@ -22,7 +22,7 @@ class Program4
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        //$this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
+        $this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
 		array_push($this->major_courses, "ACCT-1510", "ACCT-2550", "FINA-2700", "MKTG-1310", "STEN-1000", "ECON-1100", "ECON-1110"); //add business courses to list of majors
 		
