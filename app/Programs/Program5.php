@@ -25,7 +25,7 @@ class Program5
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        //$this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
+        $this->compsci_courses = $program['additional_courses'];	//program does not have this requirement
         $this->major_courses = Program::getRequiredCourses($program['id'], true);		
 		$compsci_courses_2000 = 1;
 		$dynamics_courses = 1;

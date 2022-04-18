@@ -24,7 +24,7 @@ class Program2
         $this->total_ArtsSoc_courses = $program['art_social_courses'];
         $this->min_Arts_courses = $program['art_courses'];
         $this->min_Soc_courses = $program['social_courses'];
-        //$this->compsci_courses = $program['additional_courses'];	//this program does not have this requirement, but has the cs courses 2000 and 3000 requirement instead
+        $this->compsci_courses = $program['additional_courses'];	//this program does not have this requirement, but has the cs courses 2000 and 3000 requirement instead
         $this->major_courses = Program::getRequiredCourses($program['id'], true);
 		
 		//temporarily hardcoded values? Retrieval of these values from the db requires adding additional columns to programs table
